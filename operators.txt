@@ -1,0 +1,20 @@
+Logical operators
+Here is a list of logical operators that can help your contract make decisions.
+
+&& (Logical and) let logical_and: bool = true && true
+
+|| (Logical or) let logical_or: bool = false || true
+
+! (Logical not) let logical_not: bool = not false
+
+= (Equals) let eq: bool = 2 = 3
+
+<> (Not equals) let not_eq: bool = 2 <> 3
+
+> (Greater than) let gt: bool = 4 > 3
+
+< (Less than) let lt: bool = 4 < 3
+
+>= (Greater than or equal to) let gte: bool = 4 >= 3
+
+<= (Less than or equal to) let lte: bool = 4 <= 3
