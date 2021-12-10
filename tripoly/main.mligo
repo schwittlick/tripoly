@@ -11,6 +11,11 @@
 // second contract, with dice
 // KT1TDAToeMYtkv8bJ2jxGRBVZFZ1pTZcUMvX
 
+#include "misc.mligo"
+
+// questions, how can tezos-client set Tezos.sender?
+// how to make a pseudo random nr somehow?
+
 type player = { name : string ; position : nat}
 type players_storage = (address, player) map
 type parameter =
@@ -35,14 +40,14 @@ let leave_game (storage : players_storage) : players_storage =
 let roll_dice(storage : players_storage) : players_storage = 
     let sender_addr = Tezos.sender in
     match Map.find_opt sender_addr storage with
-        Some(pl) -> let new_player_data : player = {name = pl.name; position = pl.position + 11n} in
+        Some(pl) -> let random_number : nat = 6n in //Tezos.now mod 6 in 
+                    let new_player_data : player = {name = pl.name; position = pl.position + random_number} in
                     Map.update sender_addr (Some(new_player_data)) storage
         | None -> (failwith "Please join the game first to play." : players_storage)
     
 
 let main (p, s : parameter * players_storage) : return =
     ([] : operation list),
-    
     (match p with
         Join (player) -> join_game (player, s)
         | Leave -> leave_game (s)
