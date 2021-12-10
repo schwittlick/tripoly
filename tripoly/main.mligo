@@ -1,8 +1,11 @@
 #include "misc.mligo"
 
-
-type player = { name : string ; position : nat; saved_co2_kilos : nat;}
+type player = {name : string; position : nat; saved_co2_kilos : nat;}
 type players_storage = (address, player) map
+type token_balance = nat * nat * nat
+type field = {name : string; text : string; balance : token_balance}
+type fields = (nat, field) map
+
 type parameter =
   Join of string
 | Leave
@@ -12,6 +15,9 @@ type return = operation list * players_storage
 let max_position : nat = 18n
 let max_position_idx : nat = 17n
 let co2_saved_temporary_constant : nat = 100n
+let fields_storage : fields = Map.literal [
+    (0n, {name = "project1"; text = "project_text1"; balance = (1n, 1n, 1n)});
+    (1n, {name = "project2"; text = "project_text2"; balance = (1n, 1n, 1n)})]
  
 let join_game (player_name, storage : string * players_storage) : players_storage =
     if size_op(player_name) < 1n then (failwith "Please enter a name." : players_storage) else
@@ -32,7 +38,8 @@ let calculate_saved_co2 (was_over_start: bool) : nat =
     if was_over_start then co2_saved_temporary_constant else 0n
 // this should be calculated depending on supported projects
 
-let transfer_bounty (_pl: player) : operation list =
+let __transfer_bounty (_pl: player) : operation list =
+    // unused
     // check Tezos.balance of contract to make sure it can send reward
     // https://ligolang.org/docs/tutorials/inter-contract-calls/inter-contract-calls
     let sender_addr = Tezos.sender in
@@ -69,12 +76,3 @@ let main (p, s : parameter * players_storage) : return =
         Join (player_name) -> join_game (player_name, s)
         | Leave -> leave_game (s)
         | Dice -> roll_dice (s))
-
-let _test () =
-  let initial_storage = Map.literal [("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Klodie"; position=0n; saved_co2_kilos=0n};] in
-  let (taddr, _, _) = Test.originate main initial_storage 0tez in
-  let contr = Test.to_contract(taddr) in
-  let _r = Test.transfer_to_contract_exn contr (Join ("Marcel")) 1tez  in
-  (Test.get_storage(taddr) = Map.literal [("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Klodie"; position=0n; saved_co2_kilos=0n};("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Marcel"; position=0n; saved_co2_kilos=0n};])
-
-let test = _test ()

@@ -8,8 +8,18 @@ We want to create a decentralized board-game on Tezos, to educate people about r
     how to make a pseudo random nr somehow?
     add timelock so player can only roll dice once per 5 minutes
     how to read the storage? prolly an api call to tzkt or bcd, to visualize the current state.
-    how can i check for a map as storage in a test?
+    5. how can i check for a map as storage in a test?
 
+#### question 5
+
+    let _test () =
+    let initial_storage = Map.literal [("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Klodie"; position=0n; saved_co2_kilos=0n};] in
+    let (taddr, _, _) = Test.originate main initial_storage 0tez in
+    let contr = Test.to_contract(taddr) in
+    let _r = Test.transfer_to_contract_exn contr (Join ("Marcel")) 1tez  in
+    (Test.get_storage(taddr) = Map.literal [("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Klodie"; position=0n; saved_co2_kilos=0n};("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Marcel"; position=0n; saved_co2_kilos=0n};])
+
+    let test = _test ()
 ### iteration log
 
     first contract -> KT1ChmfSbutmeGLpGqX6J7X1vZpyuh943uuM
