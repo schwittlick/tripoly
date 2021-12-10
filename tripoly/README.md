@@ -32,8 +32,8 @@ We want to create a decentralized board-game on Tezos, to educate people about r
 
 ### ipfs metadata
 
-    https://anarkrypto.github.io/upload-files-to-ipfs-from-browser-panel/public/#
-    [a relative link](../tripoly/project1.json)
+https://anarkrypto.github.io/upload-files-to-ipfs-from-browser-panel/public/#
+[a relative link](../tripoly/project1.json)
 
 
 ### endpoints
