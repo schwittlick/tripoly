@@ -3,7 +3,7 @@
 type player = {name : string; position : nat; saved_co2_kilos : nat;}
 type players_storage = (address, player) map
 type token_balance = nat * nat * nat
-type field = {name : string; text : string; balance : token_balance}
+type field = {ipfslink : string; balance : token_balance}
 type fields = (nat, field) map
 
 type parameter =
@@ -16,9 +16,9 @@ let max_position : nat = 18n
 let max_position_idx : nat = 17n
 let co2_saved_temporary_constant : nat = 100n
 let fields_storage : fields = Map.literal [
-    (0n, {name = "project1"; text = "project_text1"; balance = (1n, 1n, 1n)});
-    (1n, {name = "project2"; text = "project_text2"; balance = (1n, 1n, 1n)})]
- 
+    (0n, {ipfslink = "https://ipfs.io/ipfs/QmeGe7gPECt6CxxZP5rUGANsNvoAeAu8euEZvY7gCDHUdf"; balance = (1n, 1n, 1n)});
+    (1n, {ipfslink = "https://ipfs.io/ipfs/QmeGe7gPECt6CxxZP5rUGANsNvoAeAu8euEZvY7gCDHUdf"; balance = (1n, 1n, 1n)})]
+
 let join_game (player_name, storage : string * players_storage) : players_storage =
     if size_op(player_name) < 1n then (failwith "Please enter a name." : players_storage) else
 
