@@ -1,0 +1,9 @@
+{ parameter (or (pair %join (string %name) (nat %position)) (unit %leave)) ;
+  storage (map address (pair (string %name) (nat %position))) ;
+  code { UNPAIR ;
+         IF_LEFT
+           { SENDER ; SWAP ; SOME ; SWAP ; UPDATE }
+           { DROP ; SENDER ; NONE (pair string nat) ; SWAP ; UPDATE } ;
+         NIL operation ;
+         PAIR } }
+
