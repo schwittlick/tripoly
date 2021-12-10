@@ -11,8 +11,11 @@ type return = operation list * players_storage
 
 let max_position : nat = 18n
 let max_position_idx : nat = 17n
+let co2_saved_temporary_constant : nat = 100n
  
 let join_game (player_name, storage : string * players_storage) : players_storage =
+    if size_op(player_name) < 1n then (failwith "Please enter a name." : players_storage) else
+
     let sender_addr = Tezos.sender in
     match Map.find_opt sender_addr storage with
         Some(_pl) -> (failwith "You are already playing the game." : players_storage)
@@ -26,7 +29,7 @@ let leave_game (storage : players_storage) : players_storage =
         | None -> (failwith "You are not in the game, yet, no possible to leave." : players_storage)
 
 let calculate_saved_co2 (was_over_start: bool) : nat = 
-    if was_over_start then 100n else 0n
+    if was_over_start then co2_saved_temporary_constant else 0n
 // this should be calculated depending on supported projects
 
 let transfer_bounty (_pl: player) : operation list =

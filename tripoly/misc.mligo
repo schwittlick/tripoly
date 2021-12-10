@@ -1,0 +1,1 @@
+let size_op (s: string) : nat = String.length s
