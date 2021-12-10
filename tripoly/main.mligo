@@ -69,3 +69,12 @@ let main (p, s : parameter * players_storage) : return =
         Join (player_name) -> join_game (player_name, s)
         | Leave -> leave_game (s)
         | Dice -> roll_dice (s))
+
+let _test () =
+  let initial_storage = Map.literal [("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Klodie"; position=0n; saved_co2_kilos=0n};] in
+  let (taddr, _, _) = Test.originate main initial_storage 0tez in
+  let contr = Test.to_contract(taddr) in
+  let _r = Test.transfer_to_contract_exn contr (Join ("Marcel")) 1tez  in
+  (Test.get_storage(taddr) = Map.literal [("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Klodie"; position=0n; saved_co2_kilos=0n};("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Marcel"; position=0n; saved_co2_kilos=0n};])
+
+let test = _test ()
