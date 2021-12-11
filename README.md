@@ -2,6 +2,16 @@
 
 We want to create a decentralized board-game on Tezos, to educate people about renewable and sustainable projects in a playful and interactive way. We want to disrupt the game idea of Monopoly and turn its values around, from capitalism and re-shape it for the future of web3 to an open source knowledge game using the conventions and the features of the metaverse.
 
+### setup
+
+Our game contract is [here](./tripoly/main.mligo).
+
+We are making use of OpenMinter to mint tokens. Also we are using the nftshop contract from the tacode tutorial.
+
+For this we mint tokens, send them by hand to our nft shop. Before we do that, we need to mint all tokens and place them in the storage of the nft shop contract.
+Check [the storage file](./tripoly/nftshop_storage.mligo)
+Once this is complete it's possible to interact with the nft shop contract via it's default entry point. Parameters are nat index. Don't forget to add the price of the nft in the amount field of BCD
+
 ### questions
 
     1. questions, how can ligo dry-run set Tezos.sender? (--sender)
@@ -21,7 +31,7 @@ We want to create a decentralized board-game on Tezos, to educate people about r
     (Test.get_storage(taddr) = Map.literal [("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Klodie"; position=0n; saved_co2_kilos=0n};("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Marcel"; position=0n; saved_co2_kilos=0n};])
 
     let test = _test ()
-### iteration log
+### main.mligo iteration log
 
     first contract -> KT1ChmfSbutmeGLpGqX6J7X1vZpyuh943uuM
     second contract, with dice -> KT1TDAToeMYtkv8bJ2jxGRBVZFZ1pTZcUMvX
@@ -36,11 +46,18 @@ We want to create a decentralized board-game on Tezos, to educate people about r
     11. iteration, implements SetField admin endpoint -> KT1Q6HpqNdyNSfwkh4SaEyJNcZnK2ZrVhcsQ
 
 
+### nft shop iterations
+
+    KT1V8pKF3WjqgWUqCy4Wiho1YrU8oc1SCxoS
+    second one: KT19kzRvG6mpFPn549vohEBWmUa5grhj8BfD
+    third, only with one 1/1 nft: KT1Sw833fCed4X8pQH3wFtDhi9kAixANv35P
+    fourth with only one 1/1: KT1Rc9U3bDU3Ajbsk84X6M8zT442x3X2sECb
+
 ### ipfs metadata
 
 https://anarkrypto.github.io/upload-files-to-ipfs-from-browser-panel/public/#
 
-[example metadata json](../tripoly/project1.json)
+[example metadata json](./tripoly/project1.json)
 
 
 ### endpoints
