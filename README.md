@@ -8,9 +8,13 @@ Our game contract is [here](./tripoly/main.mligo).
 
 We are making use of OpenMinter to mint tokens. Also we are using the nftshop contract from the tacode tutorial.
 
-For this we mint tokens, send them by hand to our nft shop. Before we do that, we need to mint all tokens and place them in the storage of the nft shop contract.
-Check [the storage file](./tripoly/nftshop_storage.mligo)
-Once this is complete it's possible to interact with the nft shop contract via it's default entry point. Parameters are nat index. Don't forget to add the price of the nft in the amount field of BCD
+For this we mint tokens, send them by hand to our contract. Before we do that, we need to mint all tokens and send them to the storage of out contract after we deployed it with the storage containing all our minted token addresses.
+Check [the storage file](./tripoly/main_storage.mligo)
+Once this is complete it's possible to interact with our contract via it's 'Support' entry point. This call needs to have the same amount associated than the price of the token.
+
+### deployment
+
+The most recent contract is deployed here https://better-call.dev/hangzhou2net/KT1FmuDmRD1to4GcVHSYAZgBEccCNNdjY7Gp
 
 ### questions
 
@@ -47,9 +51,13 @@ Once this is complete it's possible to interact with the nft shop contract via i
     12. adds barebones for 5min timeout for interaction. exposes dice call *dangerours* -> KT1Xk425atpHjnBin1fgjXvumWyLssSpg6p4
     13. it seems it worked, make a real test edition: KT1UGSYe6TB5RkANKyHe7SJvsutPDwJVWbv6
     14. dice should be 1 <= nr <= 6 -> KT1T4eNM8APgQnuiy8Z2kjeEFT9XJTiUebk2
+    15. changes field record, now using stock, token addr, tez price -> KT1Js7LVjGw8L6yLYGaB36fdZw2qnapA3Fm6
+    16. included the nft shop code as an endpoint: -> KT1QiT73UPVmoDGZX6Qxpkhrqmsn4UzwarPt. i sent the nft to this address. then i can buy it and it works :)))))
+    17. made a check, cant play when nfts not finished initializing. -> KT1H2P27NYGZPrLJfoR2tuxL3HdcXVgDdbWx
+    18. deployed the same contract with 18 test nfts as storage -> KT1FmuDmRD1to4GcVHSYAZgBEccCNNdjY7Gp. again, i've sent the nft of the collection KT1CE144SvpAv4iUQb8Zey4M3SKQQEV9DWMd to the contract and bought it via the support endpoint
 
 
-### nft shop iterations
+### nft shop iterations (outdated)
 
     KT1V8pKF3WjqgWUqCy4Wiho1YrU8oc1SCxoS
     second one: KT19kzRvG6mpFPn549vohEBWmUa5grhj8BfD
@@ -65,9 +73,11 @@ https://anarkrypto.github.io/upload-files-to-ipfs-from-browser-panel/public/#
 
 ### endpoints
 
-    ligo dry-run main.mligo main 'Join("Marcel")' 'Map.literal [("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Klodie"; position=0n};]'
-    ligo dry-run main.mligo main 'Leave()' 'Map.literal [("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Alice"; position=0n};]'
-    ligo dry-run main.mligo main 'Dice()' 'Map.literal [("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Alice"; position=0n};]'
+    ligo dry-run main.mligo main 'Join("Marcel")' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z'
+    ligo dry-run main.mligo main 'Leave()' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z'
+    ligo dry-run main.mligo main 'Dice(6)' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z'
+    ligo dry-run main.mligo main 'Support()' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z' --amount=1
+    ligo dry-run main.mligo main 'Payout(10tz)' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z'
 
 
 ### nfts
