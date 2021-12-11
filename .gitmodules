@@ -1,0 +1,3 @@
+[submodule "openminter"]
+	path = openminter
+	url = git@github.com:schwittlick/minter.git
