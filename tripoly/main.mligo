@@ -29,6 +29,7 @@ type parameter =
 | Dice of nat
 | SetField of nat * nat * address * tez
 | Support
+| Payout of tez
 
 let max_position : nat = 18n
 let max_position_idx : nat = 17n
@@ -172,7 +173,25 @@ let support (storage : global_storage) : operation list * fields_storage =
   in
   ([fa2_operation ; payout_operation], token_shop_storage)
 
+let payout(tez_amount : tez) : operation list =
+    if Tezos.sender <> owner then (failwith "Access denied." : operation list)
+    else 
+    if Tezos.balance >= bounty_over_start then
+        let receiver : unit contract =
+        match (Tezos.get_contract_opt owner : unit contract option) with
+        | Some (contract) -> contract
+        | None -> (failwith ("Not a contract") : (unit contract))
+        in
+
+        let payout_operation : operation = 
+        Tezos.transaction unit tez_amount receiver 
+        in
+        [payout_operation]
+    else ([] : operation list)
+
 let main (p, s : parameter * global_storage) : return_storage =
+    let nft_count : nat = Map.size s.0 in
+    if nft_count < max_position then (failwith ("There are not enough NFTs in the storage, yet.") : (return_storage)) else
     (match p with
         Join (player_name) ->           let res : players_storage = join_game (player_name, s.1)
                                         in
@@ -189,6 +208,10 @@ let main (p, s : parameter * global_storage) : return_storage =
         | Support ->                    let res : operation list * fields_storage = support(s)
                                         in
                                         (res.0, (res.1, s.1))
+
+        | Payout(tez_amount) ->         let res : operation list = payout(tez_amount)
+                                        in
+                                        (res, s)
 
         | SetField (idx, stock, addr, price) ->   
                                         let res : fields_storage = set_field(idx, stock, addr, price, s.0)
