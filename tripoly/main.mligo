@@ -1,6 +1,6 @@
 #include "misc.mligo"
 
-type player = {name : string; position : nat; saved_co2_kilos : nat;}
+type player = {name : string; position : nat; saved_co2_kilos : nat; last_interaction : timestamp}
 type players_storage = (address, player) map
 type field = {ipfslink : string; balance : nat}
 
@@ -11,13 +11,14 @@ type return_storage = operation list * global_storage
 type parameter =
   Join of string
 | Leave
-| Dice
+| Dice of nat
 | SetField of nat * string
 
 let max_position : nat = 18n
 let max_position_idx : nat = 17n
 let co2_saved_temporary_constant : nat = 100n
 let bounty_over_start : tez = 1tz
+let five_minutes_in_seconds : int = 300
 
 let owner : address = ("tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi": address)
 
@@ -27,7 +28,7 @@ let join_game (player_name, storage : string * players_storage) : players_storag
     let sender_addr = Tezos.sender in
     match Map.find_opt sender_addr storage with
         Some(_pl) -> (failwith "You are already playing the game." : players_storage)
-        | None ->   let new_player : player = {name = player_name; position = 0n; saved_co2_kilos = 0n} in
+        | None ->   let new_player : player = {name = player_name; position = 0n; saved_co2_kilos = 0n; last_interaction = Tezos.now} in
                     Map.add sender_addr new_player storage
 
 let leave_game (storage : players_storage) : players_storage =
@@ -67,24 +68,33 @@ let transfer_bounty (over_start: bool) : operation list =
             ([] : operation list)
     else ([] : operation list)
  
-let roll_dice(storage : players_storage) : operation list * players_storage = 
-    let sender_addr = Tezos.sender in
+let roll_dice(random_number, storage : nat * players_storage) : operation list * players_storage = 
+    if random_number > 6n || random_number < 1n then
+        (failwith "You can only step at least 1 and maximum 6 fields." : operation list * players_storage)
+    else
+    let sender_addr = Tezos.sender 
+    in
     match Map.find_opt sender_addr storage with
-        Some(pl) -> let random_number : nat = 19n //Tezos.now mod 6 in 
-                    in 
-                    let new_position : nat = (pl.position + random_number) 
-                    in
-                    let new_pos_modulo : nat = new_position mod max_position
-                    in
-                    let was_over_start : bool = if new_position > max_position_idx then true else false
-                    in
-                    let saved_co2 : nat = calculate_saved_co2(was_over_start)
-                    in 
-                    let new_player_data : player = {name = pl.name; position = new_pos_modulo; saved_co2_kilos = pl.saved_co2_kilos + saved_co2} 
-                    in
-                    let updated_storage : players_storage = Map.update sender_addr (Some(new_player_data)) storage
-                    in
-                    ((transfer_bounty(was_over_start) : operation list), updated_storage)
+        Some(pl) -> 
+                    if Tezos.now < (pl.last_interaction + five_minutes_in_seconds)
+                    then 
+                        (failwith "You can only roll the dice once every 5 minutes." : operation list * players_storage)
+                    else
+                        let random_number : nat = random_number //Tezos.now mod 6 in 
+                        in 
+                        let new_position : nat = (pl.position + random_number) 
+                        in
+                        let new_pos_modulo : nat = new_position mod max_position
+                        in
+                        let was_over_start : bool = if new_position > max_position_idx then true else false
+                        in
+                        let saved_co2 : nat = calculate_saved_co2(was_over_start)
+                        in 
+                        let new_player_data : player = {name = pl.name; position = new_pos_modulo; saved_co2_kilos = pl.saved_co2_kilos + saved_co2; last_interaction = Tezos.now} 
+                        in
+                        let updated_storage : players_storage = Map.update sender_addr (Some(new_player_data)) storage
+                        in
+                        ((transfer_bounty(was_over_start) : operation list), updated_storage)
         | None -> (failwith "Please join the game first to play." : operation list * players_storage)
     
 
@@ -98,7 +108,7 @@ let main (p, s : parameter * global_storage) : return_storage =
                                         in
                                         (([] : operation list), (s.0, res))
 
-        | Dice ->                       let res : operation list * players_storage = roll_dice (s.1) 
+        | Dice (random_number) ->       let res : operation list * players_storage = roll_dice (random_number, s.1) 
                                         in
                                         (res.0, (s.0, res.1))
 
