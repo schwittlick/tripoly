@@ -2,7 +2,7 @@
 
 type player = {name : string; position : nat; saved_co2_kilos : nat; last_interaction : timestamp}
 type players_storage = (address, player) map
-type field = {ipfslink : string; balance : nat}
+type field = { current_stock : nat ; token_address : address ; token_price : tez }
 
 type fields_storage = (nat, field) map
 type global_storage = fields_storage * players_storage
@@ -12,7 +12,7 @@ type parameter =
   Join of string
 | Leave
 | Dice of nat
-| SetField of nat * string
+| SetField of nat * nat * address * tez
 
 let max_position : nat = 18n
 let max_position_idx : nat = 17n
@@ -41,11 +41,10 @@ let calculate_saved_co2 (was_over_start: bool) : nat =
     if was_over_start then co2_saved_temporary_constant else 0n
     // this should be calculated depending on supported projects / owned nfts
 
-let set_field(index, link, fields_storage : nat * string * fields_storage) : fields_storage =
-    // check if it exists already
+let set_field(index, stock, addr, price, fields_storage : nat * nat * address * tez * fields_storage) : fields_storage =
     if Tezos.sender <> owner then (failwith "Access denied." : fields_storage)
     else 
-    let updated_storage : fields_storage = Map.update index (Some{ipfslink=link; balance=0n}) fields_storage
+    let updated_storage : fields_storage = Map.update index (Some{current_stock=stock; token_address=addr; token_price=price}) fields_storage
     in
     updated_storage
 
@@ -112,6 +111,7 @@ let main (p, s : parameter * global_storage) : return_storage =
                                         in
                                         (res.0, (s.0, res.1))
 
-        | SetField (idx, ipfslink) ->   let res : fields_storage = set_field(idx, ipfslink, s.0)
+        | SetField (idx, stock, addr, price) ->   
+                                        let res : fields_storage = set_field(idx, stock, addr, price, s.0)
                                         in
                                         (([] : operation list), (res, s.1)))
