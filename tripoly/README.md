@@ -33,7 +33,8 @@ We want to create a decentralized board-game on Tezos, to educate people about r
 ### ipfs metadata
 
 https://anarkrypto.github.io/upload-files-to-ipfs-from-browser-panel/public/#
-[a relative link](../tripoly/project1.json)
+
+[example metadata json](../tripoly/project1.json)
 
 
 ### endpoints
@@ -41,3 +42,9 @@ https://anarkrypto.github.io/upload-files-to-ipfs-from-browser-panel/public/#
     ligo dry-run main.mligo main 'Join("Marcel")' 'Map.literal [("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Klodie"; position=0n};]'
     ligo dry-run main.mligo main 'Leave()' 'Map.literal [("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Alice"; position=0n};]'
     ligo dry-run main.mligo main 'Dice()' 'Map.literal [("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Alice"; position=0n};]'
+
+
+### nfts
+
+    Use OpenMinter https://github.com/tqtezos/minter
+    Created new collection TestCollectionHackathon (KT1N6GwCQMNWkHaAPKL6ZgLSgxi7Y26dLybX)
