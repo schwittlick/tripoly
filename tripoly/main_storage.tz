@@ -1,2 +1,3 @@
-{ Elt "tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi" (Pair (Pair "Klodie" 0) 0) }
+(Pair { Elt 0 (Pair 1 "link") }
+      { Elt "tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi" (Pair (Pair "Marcel" 0) 0) })
 

@@ -2,9 +2,10 @@
 
 type player = {name : string; position : nat; saved_co2_kilos : nat;}
 type players_storage = (address, player) map
-type token_balance = nat * nat * nat
-type field = {ipfslink : string; balance : token_balance}
+type field = {ipfslink : string; balance : nat}
 type fields = (nat, field) map
+type storage = fields * players_storage
+type return_storage = operation list * storage
 
 type parameter =
   Join of string
@@ -17,7 +18,6 @@ let max_position : nat = 18n
 let max_position_idx : nat = 17n
 let co2_saved_temporary_constant : nat = 100n
 let bounty_over_start : tez = 1tz
-let fields_storage : fields = Map.empty
 
 let owner : address = ("tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi": address)
 
@@ -40,9 +40,13 @@ let calculate_saved_co2 (was_over_start: bool) : nat =
     if was_over_start then co2_saved_temporary_constant else 0n
 // this should be calculated depending on supported projects
 
-let set_field(_index, _ipfslink : nat * string) : operation list =
-    if Tezos.source <> owner then (failwith "Access denied." : operation list)
-    else ([] : operation list)
+let set_field(index, link, fields_storage : nat * string * fields) : fields =
+    // check if it exists already
+    if Tezos.sender <> owner then (failwith "Access denied." : fields)
+    else 
+    let updated_storage : fields = Map.update index (Some{ipfslink=link; balance=0n}) fields_storage
+    in
+    updated_storage
 
 let transfer_bounty (over_start: bool) : operation list =
     if Tezos.balance >= bounty_over_start then
@@ -80,9 +84,18 @@ let roll_dice(storage : players_storage) : return =
         | None -> (failwith "Please join the game first to play." : return)
     
 
-let main (p, s : parameter * players_storage) : return =
+let main (p, s : parameter * storage) : return_storage =
     (match p with
-        Join (player_name) -> join_game (player_name, s)
-        | Leave -> leave_game (s)
-        | Dice -> roll_dice (s)
-        | SetField (idx, ipfslink) -> set_field(idx, ipfslink), s)
+        Join (player_name) -> let res : return = join_game (player_name, s.1)
+                                in
+                                (res.0, (s.0, res.1))
+        | Leave -> let res : return = leave_game (s.1)
+                    in
+                    (res.0, (s.0, res.1))
+        | Dice -> let res : return = roll_dice (s.1) 
+                    in
+                    (res.0, (s.0, res.1))
+
+        | SetField (idx, ipfslink) -> let res : fields = set_field(idx, ipfslink, s.0)
+                                        in
+                                        (([] : operation list), (res, s.1)))

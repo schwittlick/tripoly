@@ -1,12 +1,16 @@
-{ parameter (or (or (unit %dice) (string %join)) (unit %leave)) ;
+{ parameter
+    (or (or (unit %dice) (string %join)) (or (unit %leave) (pair %setField nat string))) ;
   storage
-    (map address (pair (pair (string %name) (nat %position)) (nat %saved_co2_kilos))) ;
+    (pair (map nat (pair (nat %balance) (string %ipfslink)))
+          (map address (pair (pair (string %name) (nat %position)) (nat %saved_co2_kilos)))) ;
   code { PUSH mutez 1000000 ;
          SWAP ;
          UNPAIR ;
          IF_LEFT
            { IF_LEFT
                { DROP ;
+                 DUP ;
+                 CDR ;
                  SENDER ;
                  SWAP ;
                  DUP ;
@@ -16,8 +20,12 @@
                  DUG 2 ;
                  GET ;
                  IF_NONE
-                   { DROP 3 ; PUSH string "Please join the game first to play." ; FAILWITH }
-                   { PUSH nat 19 ;
+                   { SWAP ;
+                     DIG 3 ;
+                     DROP 3 ;
+                     PUSH string "Please join the game first to play." ;
+                     FAILWITH }
+                   { PUSH nat 6 ;
                      SWAP ;
                      DUP ;
                      DUG 2 ;
@@ -57,7 +65,7 @@
                      SOME ;
                      DIG 3 ;
                      UPDATE ;
-                     DUP 3 ;
+                     DUP 4 ;
                      BALANCE ;
                      COMPARE ;
                      GE ;
@@ -66,17 +74,30 @@
                           IF { SENDER ;
                                CONTRACT unit ;
                                IF_NONE { PUSH string "Not a contract" ; FAILWITH } {} ;
-                               DIG 2 ;
+                               DIG 3 ;
                                UNIT ;
                                TRANSFER_TOKENS ;
                                NIL operation ;
                                SWAP ;
                                CONS }
-                             { SWAP ; DROP ; NIL operation } }
-                        { SWAP ; DIG 2 ; DROP 2 ; NIL operation } ;
-                     PAIR } }
+                             { DIG 2 ; DROP ; NIL operation } }
+                        { SWAP ; DIG 3 ; DROP 2 ; NIL operation } ;
+                     PAIR } ;
+                 DUP ;
+                 CDR ;
+                 DIG 2 ;
+                 CAR ;
+                 PAIR ;
+                 SWAP ;
+                 CAR ;
+                 PAIR }
                { DIG 2 ;
                  DROP ;
+                 SWAP ;
+                 DUP ;
+                 DUG 2 ;
+                 CDR ;
+                 SWAP ;
                  PUSH nat 1 ;
                  SWAP ;
                  DUP ;
@@ -105,25 +126,61 @@
                           UPDATE ;
                           NIL operation ;
                           PAIR }
-                        { DROP 4 ; PUSH string "You are already playing the game." ; FAILWITH } } } }
-           { DIG 2 ;
-             DROP 2 ;
-             SENDER ;
-             SWAP ;
-             DUP ;
-             DUG 2 ;
-             SWAP ;
-             DUP ;
-             DUG 2 ;
-             GET ;
-             IF_NONE
-               { DROP 2 ;
-                 PUSH string "You are not in the game, yet, no possible to leave." ;
-                 FAILWITH }
-               { DROP ;
-                 NONE (pair (pair string nat) nat) ;
+                        { DROP 4 ; PUSH string "You are already playing the game." ; FAILWITH } } ;
+                 DUP ;
+                 CDR ;
+                 DIG 2 ;
+                 CAR ;
+                 PAIR ;
                  SWAP ;
-                 UPDATE ;
+                 CAR ;
+                 PAIR } }
+           { DIG 2 ;
+             DROP ;
+             IF_LEFT
+               { DROP ;
+                 DUP ;
+                 CDR ;
+                 SENDER ;
+                 SWAP ;
+                 DUP ;
+                 DUG 2 ;
+                 SWAP ;
+                 DUP ;
+                 DUG 2 ;
+                 GET ;
+                 IF_NONE
+                   { DROP 2 ;
+                     PUSH string "You are not in the game, yet, no possible to leave." ;
+                     FAILWITH }
+                   { DROP ;
+                     NONE (pair (pair string nat) nat) ;
+                     SWAP ;
+                     UPDATE ;
+                     NIL operation ;
+                     PAIR } ;
+                 DUP ;
+                 CDR ;
+                 DIG 2 ;
+                 CAR ;
+                 PAIR ;
+                 SWAP ;
+                 CAR ;
+                 PAIR }
+               { UNPAIR ;
+                 DUP 3 ;
+                 CAR ;
+                 DUG 2 ;
+                 PUSH address "tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi" ;
+                 SENDER ;
+                 COMPARE ;
+                 NEQ ;
+                 IF { DROP 3 ; PUSH string "Access denied." ; FAILWITH }
+                    { DUG 2 ; PUSH nat 0 ; PAIR ; SOME ; DIG 2 ; UPDATE } ;
+                 SWAP ;
+                 CDR ;
+                 SWAP ;
+                 PAIR ;
                  NIL operation ;
                  PAIR } } } }
 
