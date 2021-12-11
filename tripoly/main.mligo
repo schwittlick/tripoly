@@ -15,9 +15,7 @@ type return = operation list * players_storage
 let max_position : nat = 18n
 let max_position_idx : nat = 17n
 let co2_saved_temporary_constant : nat = 100n
-let fields_storage : fields = Map.literal [
-    (0n, {ipfslink = "https://ipfs.io/ipfs/QmeGe7gPECt6CxxZP5rUGANsNvoAeAu8euEZvY7gCDHUdf"; balance = (1n, 1n, 1n)});
-    (1n, {ipfslink = "https://ipfs.io/ipfs/QmeGe7gPECt6CxxZP5rUGANsNvoAeAu8euEZvY7gCDHUdf"; balance = (1n, 1n, 1n)})]
+let fields_storage : fields = Map.empty
 
 let join_game (player_name, storage : string * players_storage) : players_storage =
     if size_op(player_name) < 1n then (failwith "Please enter a name." : players_storage) else

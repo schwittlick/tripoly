@@ -46,5 +46,9 @@ https://anarkrypto.github.io/upload-files-to-ipfs-from-browser-panel/public/#
 
 ### nfts
 
+
     Use OpenMinter https://github.com/tqtezos/minter
+    With wallet tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi
     Created new collection TestCollectionHackathon (KT1N6GwCQMNWkHaAPKL6ZgLSgxi7Y26dLybX)
+    Created new token: First Anti Monopoly NFT in KT1N6GwCQMNWkHaAPKL6ZgLSgxi7Y26dLybX (token 0)
+    Transferring token to KT1EdSL2bvgXBUedPq5d5R7SHbpk5EmHz9uW (transfer contract from tacode)

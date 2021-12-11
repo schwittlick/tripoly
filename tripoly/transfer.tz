@@ -1,0 +1,31 @@
+{ parameter address ;
+  storage unit ;
+  code { UNPAIR ;
+         SELF_ADDRESS ;
+         NIL (pair address (pair nat nat)) ;
+         SENDER ;
+         PUSH nat 0 ;
+         PUSH nat 1 ;
+         SWAP ;
+         PAIR ;
+         SWAP ;
+         PAIR ;
+         CONS ;
+         SWAP ;
+         PAIR ;
+         SWAP ;
+         CONTRACT %transfer
+           (list (pair (address %from_)
+                       (list %txs (pair (address %to_) (pair (nat %token_id) (nat %amount)))))) ;
+         IF_NONE { PUSH string "Invalid external token contract" ; FAILWITH } {} ;
+         PUSH mutez 0 ;
+         NIL (pair address (list (pair address (pair nat nat)))) ;
+         DIG 3 ;
+         CONS ;
+         TRANSFER_TOKENS ;
+         SWAP ;
+         NIL operation ;
+         DIG 2 ;
+         CONS ;
+         PAIR } }
+

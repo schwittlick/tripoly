@@ -1,0 +1,94 @@
+{ parameter nat ;
+  storage
+    (map nat
+         (pair (pair (nat %current_stock) (address %token_address)) (mutez %token_price))) ;
+  code { UNPAIR ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         GET ;
+         IF_NONE { PUSH string "Unknown kind of token" ; FAILWITH } {} ;
+         DUP ;
+         CDR ;
+         AMOUNT ;
+         COMPARE ;
+         NEQ ;
+         IF { PUSH string "Sorry, the token you are trying to purchase has a different price" ;
+              FAILWITH }
+            {} ;
+         PUSH nat 0 ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         CAR ;
+         CAR ;
+         COMPARE ;
+         EQ ;
+         IF { PUSH string "Sorry, the token you are trying to purchase is out of stock" ;
+              FAILWITH }
+            {} ;
+         DIG 2 ;
+         SWAP ;
+         DUP ;
+         DUG 2 ;
+         CDR ;
+         DUP 3 ;
+         CAR ;
+         CDR ;
+         PUSH nat 1 ;
+         DUP 5 ;
+         CAR ;
+         CAR ;
+         SUB ;
+         ABS ;
+         PAIR ;
+         PAIR ;
+         SOME ;
+         DIG 3 ;
+         UPDATE ;
+         SELF_ADDRESS ;
+         NIL (pair address (pair nat nat)) ;
+         SENDER ;
+         PUSH nat 1 ;
+         DUP 6 ;
+         CAR ;
+         CAR ;
+         SUB ;
+         ABS ;
+         PUSH nat 1 ;
+         SWAP ;
+         PAIR ;
+         SWAP ;
+         PAIR ;
+         CONS ;
+         SWAP ;
+         PAIR ;
+         DIG 2 ;
+         CAR ;
+         CDR ;
+         CONTRACT %transfer
+           (list (pair (address %from_)
+                       (list %txs (pair (address %to_) (pair (nat %token_id) (nat %amount)))))) ;
+         IF_NONE { PUSH string "Invalid external token contract" ; FAILWITH } {} ;
+         PUSH mutez 0 ;
+         NIL (pair address (list (pair address (pair nat nat)))) ;
+         DIG 3 ;
+         CONS ;
+         TRANSFER_TOKENS ;
+         PUSH address "tz1Rv9NDodukAWpYfHcx1HQStFoeHSZmdpFF" ;
+         CONTRACT unit ;
+         IF_NONE { PUSH string "Not a contract" ; FAILWITH } {} ;
+         AMOUNT ;
+         UNIT ;
+         TRANSFER_TOKENS ;
+         DIG 2 ;
+         NIL operation ;
+         DIG 2 ;
+         CONS ;
+         DIG 2 ;
+         CONS ;
+         PAIR } }
+
