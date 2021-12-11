@@ -15,7 +15,7 @@ type transfer =
   txs : transfer_destination list;
 }
 
-type player = {name : string; position : nat; saved_co2_kilos : nat; last_interaction : timestamp}
+type player = {name : string; position : nat; saved_co2_kilos : nat; last_dice_roll : timestamp}
 type players_storage = (address, player) map
 type field = { current_stock : nat ; token_address : address ; token_price : tez }
 
@@ -44,7 +44,7 @@ let join_game (player_name, storage : string * players_storage) : players_storag
     let sender_addr = Tezos.sender in
     match Map.find_opt sender_addr storage with
         Some(_pl) -> (failwith "You are already playing the game." : players_storage)
-        | None ->   let new_player : player = {name = player_name; position = 0n; saved_co2_kilos = 0n; last_interaction = Tezos.now} in
+        | None ->   let new_player : player = {name = player_name; position = 0n; saved_co2_kilos = 0n; last_dice_roll = Tezos.now} in
                     Map.add sender_addr new_player storage
 
 let leave_game (storage : players_storage) : players_storage =
@@ -91,7 +91,7 @@ let roll_dice(random_number, storage : nat * players_storage) : operation list *
     in
     match Map.find_opt sender_addr storage with
         Some(pl) -> 
-                    if Tezos.now < (pl.last_interaction + five_minutes_in_seconds)
+                    if Tezos.now < (pl.last_dice_roll + five_minutes_in_seconds)
                     then 
                         (failwith "You can only roll the dice once every 5 minutes." : operation list * players_storage)
                     else
@@ -105,7 +105,7 @@ let roll_dice(random_number, storage : nat * players_storage) : operation list *
                         in
                         let saved_co2 : nat = calculate_saved_co2(was_over_start)
                         in 
-                        let new_player_data : player = {name = pl.name; position = new_pos_modulo; saved_co2_kilos = pl.saved_co2_kilos + saved_co2; last_interaction = Tezos.now} 
+                        let new_player_data : player = {name = pl.name; position = new_pos_modulo; saved_co2_kilos = pl.saved_co2_kilos + saved_co2; last_dice_roll = Tezos.now} 
                         in
                         let updated_storage : players_storage = Map.update sender_addr (Some(new_player_data)) storage
                         in
@@ -114,12 +114,15 @@ let roll_dice(random_number, storage : nat * players_storage) : operation list *
     
 
 
-let support (token_shop_storage : fields_storage) : operation list * fields_storage =
-  //let sender_addr = Tezos.sender in
-  //match Map.find_opt sender_addr storage with
-  //Some(pl) -> pl
-  //| None -> (failwith "You are not in the game." : players_storage)
-  let token_kind_index : nat = 0n
+let support (storage : global_storage) : operation list * fields_storage =
+  let sender_addr = Tezos.sender in
+  match Map.find_opt sender_addr storage.1 with
+  None -> (failwith "You are not in the game." : operation list * fields_storage)
+  | Some(pl) -> 
+   
+  let token_shop_storage : fields_storage = storage.0
+  in
+  let token_kind_index : nat = pl.position
   in
   let token_kind : field =
     match Map.find_opt (token_kind_index) token_shop_storage with
@@ -182,9 +185,11 @@ let main (p, s : parameter * global_storage) : return_storage =
         | Dice (random_number) ->       let res : operation list * players_storage = roll_dice (random_number, s.1) 
                                         in
                                         (res.0, (s.0, res.1))
-        | Support ->                    let res : operation list * fields_storage = support(s.0)
+
+        | Support ->                    let res : operation list * fields_storage = support(s)
                                         in
                                         (res.0, (res.1, s.1))
+
         | SetField (idx, stock, addr, price) ->   
                                         let res : fields_storage = set_field(idx, stock, addr, price, s.0)
                                         in
