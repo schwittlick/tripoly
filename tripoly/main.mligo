@@ -6,13 +6,13 @@ type field = {ipfslink : string; balance : nat}
 type fields = (nat, field) map
 type storage = fields * players_storage
 type return_storage = operation list * storage
+type return = operation list * players_storage
 
 type parameter =
   Join of string
 | Leave
 | Dice
 | SetField of nat * string
-type return = operation list * players_storage
 
 let max_position : nat = 18n
 let max_position_idx : nat = 17n
@@ -38,7 +38,7 @@ let leave_game (storage : players_storage) : return =
 
 let calculate_saved_co2 (was_over_start: bool) : nat = 
     if was_over_start then co2_saved_temporary_constant else 0n
-// this should be calculated depending on supported projects
+    // this should be calculated depending on supported projects / owned nfts
 
 let set_field(index, link, fields_storage : nat * string * fields) : fields =
     // check if it exists already
@@ -74,13 +74,17 @@ let roll_dice(storage : players_storage) : return =
                     in 
                     let new_position : nat = (pl.position + random_number) 
                     in
-                    let new_position_and_was_over_start : nat * bool = (new_position mod max_position, (if new_position > max_position_idx then true else false)) 
+                    let new_pos_modulo : nat = new_position mod max_position
                     in
-                    let new_player_data : player = {name = pl.name; position = new_position_and_was_over_start.0; saved_co2_kilos = pl.saved_co2_kilos + calculate_saved_co2(new_position_and_was_over_start.1)} 
+                    let was_over_start : bool = if new_position > max_position_idx then true else false
+                    in
+                    let saved_co2 : nat = calculate_saved_co2(was_over_start)
+                    in 
+                    let new_player_data : player = {name = pl.name; position = new_pos_modulo; saved_co2_kilos = pl.saved_co2_kilos + saved_co2} 
                     in
                     let updated_storage : players_storage = Map.update sender_addr (Some(new_player_data)) storage
                     in
-                    ((transfer_bounty(new_position_and_was_over_start.1) : operation list), updated_storage)
+                    ((transfer_bounty(was_over_start) : operation list), updated_storage)
         | None -> (failwith "Please join the game first to play." : return)
     
 
