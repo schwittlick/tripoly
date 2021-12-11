@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Google News Apis</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script src="script.js"></script>
+    <script src="./walletbeacon.min.js"></script>
+
+    <script>
+
+        var contract = "KT1FmuDmRD1to4GcVHSYAZgBEccCNNdjY7Gp";
+        /*
+        $(document).ready(function () {
+            $.ajax({
+                url: "https://api.better-call.dev/v1/contract/hangzhou2net/" + contract + "/storage"
+            }).then(function (data) {
+                var parsed = data[0]["children"][1]["children"];
+                parsed.forEach((x, i) => $('#news').append("<ul><li>" + x["name"] + " " + x["children"][1]["value"] + "</li></ul>"));
+                console.log(parsed);
+
+            });
+        });
+        */
+        console.log(document.fonts.check("12px JetBrains Mono Regular", '🶟'))
+
+        $(document).ready(function () {
+            function tableCreate(position_map) {
+                const body = document.body,
+                    tbl = document.createElement('table');
+                tbl.style.width = '100px';
+                tbl.style.border = '1px solid black';
+                console.log("making table")
+
+                for (let i = 0; i < 1; i++) {
+                    const tr = tbl.insertRow();
+                    for (let j = 0; j < 18; j++) {
+                        if (i === 2 && j === 1) {
+                            break;
+                        } else {
+                            const td = tr.insertCell();
+                            var hit = false;
+                            console.log(position_map);
+                            for (const [key, value] of position_map.entries()) {
+                                if(j === parseInt(value))
+                                {
+                                    td.appendChild(document.createTextNode(key));
+                                    hit = true;
+                                }
+                            }
+
+                            if(!hit)
+                            {
+                                td.appendChild(document.createTextNode(`___`));
+                            }
+                           // if (j === play_idx) {
+                           //     
+                           // } else {
+                               
+                          //  }
+                            td.style.border = '1px solid black';
+                            if (i === 1 && j === 1) {
+                                td.setAttribute('rowSpan', '2');
+                            }
+                        }
+                    }
+                }
+                return tbl;
+                //body.appendChild(tbl);
+            }
+
+            //tableCreate();
+
+            $('#refresh').click(function () {
+
+                $.ajax({
+                    url: "https://api.better-call.dev/v1/contract/hangzhou2net/" + contract + "/storage"
+                }).then(function (data) {
+                    const map1 = new Map();
+                    var parsed = data[0]["children"][1]["children"];
+                    $('#news').empty();
+                    $('#board').empty();
+                    parsed.forEach(function (x, index) {
+                        //console.log(item, index);
+                        
+                        $('#news').append("<p>"+index+"</p>");
+                        x["children"].forEach(function (element, idx) {
+                            $('#news').append("<ul><li>" + x["name"] + " " + element["name"] + " " + element["value"] + "</li></ul>");
+                        }
+                        );
+                        map1.set(x["children"][1]["value"], x["children"][2]["value"]);
+                        console.log(map1);
+                    });
+                    //parsed.forEach((x, i) => $('#news').append("<ul><li>" + x["name"] + " " + x["children"][1]["name"] + " " + x["children"][1]["value"] + "</li></ul>"));
+                    console.log(map1);
+                    var tab = tableCreate(map1);
+                    $(tab).appendTo("#board");
+                    $("<button />").html("document.Element").appendTo("#board");
+                });
+            });
+
+            $('#sync').click(function () {
+                requestPermission();
+            });
+        });
+
+    </script>
+
+    <style>
+        body {
+            font-family: 'JetBrains Mono Regular';
+        }
+
+        p {
+            width: 100%;
+            height: auto;
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+
+        span {
+            position: relative;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <span>
+        Active account:
+        <span id="activeAccount"></span>
+        <span id="activeAccountNetwork"></span>
+        <span id="activeAccountTransport"></span>
+    </span>
+    </br>
+    </br>
+    <input id="refresh" type="button" value="refresh &#x261D" />
+    <input id="sync" type="button" value="sync &#x261D" />
+    </br>
+    </br>
+    <p>current players</p>
+    <div id="news"> </div>
+    <div id="board"></div>
+    <div id="everything"></div>
+
+    <script>
+
+        window.beaconSdkDebugEnabled = true
+        // Initiate DAppClient
+        const client = new beacon.DAppClient({
+            name: 'Tripoly Tezos', // Name of the DApp,
+            disclaimerText: 'This is an optional <b>disclaimer</b>.'
+            // preferredNetwork: beacon.NetworkType.DELPHINET
+            // matrixNodes: ['test.papers.tech', 'test2.papers.tech', 'matrix.papers.tech']
+            // matrixNodes: ['beacon-node-0.papers.tech:8448']
+            // matrixNodes: ['matrix.papers.tech']
+            // matrixNodes: ['beacon.tztip.me']
+        })
+
+        // Display the active account in the UI
+        const updateActiveAccount = () => {
+            client.getActiveAccount().then((activeAccount) => {
+                if (activeAccount) {
+                    document.getElementById('activeAccount').innerHTML = activeAccount.address;
+                    document.getElementById('activeAccountNetwork').innerHTML = activeAccount.network.type;
+                    document.getElementById('activeAccountTransport').innerHTML = activeAccount.origin.type;
+                } else {
+                    document.getElementById('activeAccount').innerHTML = '';
+                    document.getElementById('activeAccountNetwork').innerHTML = '';
+                    document.getElementById('activeAccountTransport').innerHTML = '';
+                }
+            })
+        }
+        updateActiveAccount()
+
+        // Initiate a permission request
+        const requestPermission = (callback) => {
+            client
+                .requestPermissions({
+                    network: {
+                        type: beacon.NetworkType.CUSTOM,
+                        name: "Local Node",
+                        rpcUrl: "https://rpc.hangzhounet.teztnets.xyz"
+                    }
+                })
+                .then((permissions) => {
+                    console.log('permissions', permissions)
+                    if (callback) {
+                        callback(permissions)
+                    }
+                    updateActiveAccount()
+                })
+                .catch((error) => {
+                    console.log('error during permission request', error)
+                })
+        }
+
+        // Add event listener to the button
+        document.getElementById('connect').addEventListener('click', () => {
+            // Check if we have an active account
+            client.getActiveAccount().then((activeAccount) => {
+                if (activeAccount) {
+                    // If we have an active account, send the delegate operation directly
+                    delegate()
+                } else {
+                    // If we don't have an active account, we need to request permissions first and then send the delegate operation
+                    requestPermission((permissions) => {
+                        delegate()
+                        updateActiveAccount()
+                    })
+                }
+            })
+        })
+
+        // Add event listener to the button
+        document.getElementById('requestPermission').addEventListener('click', () => {
+            requestPermission()
+        })
+
+        // Add event listener to the button
+        document.getElementById('reset').addEventListener('click', () => {
+            client.destroy().then(() => {
+                window.location.reload()
+            })
+        })
+
+        // Add event listener to the button
+        document.getElementById('contractCall').addEventListener('click', () => {
+            client
+                .requestOperation({
+                    operationDetails: [
+                        {
+                            kind: beacon.TezosOperationType.TRANSACTION,
+                            amount: '0',
+                            destination: 'KT1RxKJyi48W3bZR8HErRiisXZQw19HwLGWj',
+                            parameters: {
+                                entrypoint: 'toggleStatus',
+                                value: {
+                                    prim: 'True'
+                                }
+                            }
+                        }
+                    ]
+                })
+                .then((response) => console.log(response))
+                .catch((error) => console.log(error))
+        })
+
+    </script>
+</body>
+
+</html>
