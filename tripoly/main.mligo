@@ -1,5 +1,20 @@
 #include "misc.mligo"
 
+type transfer_destination =
+[@layout:comb]
+{
+  to_ : address;
+  token_id : nat;
+  amount : nat;
+}
+ 
+type transfer =
+[@layout:comb]
+{
+  from_ : address;
+  txs : transfer_destination list;
+}
+
 type player = {name : string; position : nat; saved_co2_kilos : nat; last_interaction : timestamp}
 type players_storage = (address, player) map
 type field = { current_stock : nat ; token_address : address ; token_price : tez }
@@ -13,6 +28,7 @@ type parameter =
 | Leave
 | Dice of nat
 | SetField of nat * nat * address * tez
+| Support
 
 let max_position : nat = 18n
 let max_position_idx : nat = 17n
@@ -97,6 +113,62 @@ let roll_dice(random_number, storage : nat * players_storage) : operation list *
         | None -> (failwith "Please join the game first to play." : operation list * players_storage)
     
 
+
+let support (token_shop_storage : fields_storage) : operation list * fields_storage =
+  //let sender_addr = Tezos.sender in
+  //match Map.find_opt sender_addr storage with
+  //Some(pl) -> pl
+  //| None -> (failwith "You are not in the game." : players_storage)
+  let token_kind_index : nat = 0n
+  in
+  let token_kind : field =
+    match Map.find_opt (token_kind_index) token_shop_storage with
+    | Some k -> k
+    | None -> (failwith "Unknown kind of token" : field)
+  in
+ 
+  let () = if Tezos.amount <> token_kind.token_price then
+    failwith "Sorry, the token you are trying to purchase has a different price"
+  in
+ 
+  let () = if token_kind.current_stock = 0n then
+    failwith "Sorry, the token you are trying to purchase is out of stock"
+  in
+ 
+  let token_shop_storage = Map.update
+    token_kind_index
+    (Some { token_kind with current_stock = abs (token_kind.current_stock - 1n) })
+    token_shop_storage
+  in
+    let tr : transfer = {
+    from_ = Tezos.self_address;
+    txs = [ {
+      to_ = Tezos.sender;
+      token_id = abs (token_kind.current_stock - 1n);
+      amount = 1n;
+    } ];
+  } 
+  in
+  let entrypoint : transfer list contract = 
+    match ( Tezos.get_entrypoint_opt "%transfer" token_kind.token_address : transfer list contract option ) with
+    | None -> ( failwith "Invalid external token contract" : transfer list contract )
+    | Some e -> e
+  in
+ 
+  let fa2_operation : operation =
+    Tezos.transaction [tr] 0mutez entrypoint
+  in
+   let receiver : unit contract =
+    match (Tezos.get_contract_opt owner : unit contract option) with
+    | Some (contract) -> contract
+    | None -> (failwith ("Not a contract") : (unit contract))
+  in
+ 
+  let payout_operation : operation = 
+    Tezos.transaction unit amount receiver 
+  in
+  ([fa2_operation ; payout_operation], token_shop_storage)
+
 let main (p, s : parameter * global_storage) : return_storage =
     (match p with
         Join (player_name) ->           let res : players_storage = join_game (player_name, s.1)
@@ -110,7 +182,9 @@ let main (p, s : parameter * global_storage) : return_storage =
         | Dice (random_number) ->       let res : operation list * players_storage = roll_dice (random_number, s.1) 
                                         in
                                         (res.0, (s.0, res.1))
-
+        | Support ->                    let res : operation list * fields_storage = support(s.0)
+                                        in
+                                        (res.0, (res.1, s.1))
         | SetField (idx, stock, addr, price) ->   
                                         let res : fields_storage = set_field(idx, stock, addr, price, s.0)
                                         in
