@@ -1,4 +1,6 @@
 // ligo dry-run user_management_map.mligo main 'Add(3n, {name="lol"; is_admin=true})' 'Map.literal [0n, {name="Alice"; is_admin=false};]'
+// ligo compile-contract user_management_map.mligo main --output-file=user_management_map.tz
+// ligo compile-storage user_management_map.mligo main 'Map.literal [0n, {name="Alice"; is_admin=false};]' --output-file=user_management_map_storage.tz
 
 type user = { name : string ; is_admin : bool }
 type id = nat
