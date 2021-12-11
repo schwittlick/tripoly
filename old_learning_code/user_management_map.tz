@@ -1,0 +1,13 @@
+{ parameter
+    (or (or (pair %add nat (pair (bool %is_admin) (string %name))) (nat %remove))
+        (pair %update nat (pair (bool %is_admin) (string %name)))) ;
+  storage (map nat (pair (bool %is_admin) (string %name))) ;
+  code { UNPAIR ;
+         IF_LEFT
+           { IF_LEFT
+               { UNPAIR ; SWAP ; SOME ; SWAP ; UPDATE }
+               { NONE (pair bool string) ; SWAP ; UPDATE } }
+           { UNPAIR ; DUG 2 ; SOME ; DIG 2 ; UPDATE } ;
+         NIL operation ;
+         PAIR } }
+
