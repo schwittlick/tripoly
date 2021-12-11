@@ -9,24 +9,20 @@
 		"api": "https://api.hangzhou2net.tzkt.io"
 	},
 	"admin": {
-		"address": "tz1fUqB1d5bWtMrF98pFCWdaY5XpcEgYFSyu"
+		"address": "tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi"
 	},
 	"ipfsApi": "https://minter-api.tqhosted.com",
 	"ipfsGateway": "https://tqtezos.mypinata.cloud",
 	"contractOpts": {
 		"marketplace": {
-			"adminOnly": true,
-			"fee": {
-				"percent": 5,
-				"address": "tz1fUqB1d5bWtMrF98pFCWdaY5XpcEgYFSyu"
-			}
+			"adminOnly": true
 		}
 	},
 	"contracts": {
-		"nftFaucet": "KT1BCVh2FyvEeE1DYRy7pHEsxF129Xdx7gBZ",
+		"nftFaucet": "KT1C49Xf4YGW3W3aG5ewfJcWNkAYAn9L7ZvL",
 		"marketplace": {
 			"fixedPrice": {
-				"tez": "KT1XZGmPkmmJaZp8fcprHADAi8fHDRtibQx9"
+				"tez": "KT1PW18iFcC3bpoCET9ftHZAM9XxJRVrceGx"
 			}
 		}
 	}
