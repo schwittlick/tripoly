@@ -8,17 +8,15 @@ The most recent contract is deployed here https://better-call.dev/hangzhou2net/K
 
 The frontend is running here: https://schwittlick.net/tzconnect_hackathon/
 
-![alt text](./images/54cd9a2eb37d491ebaabd9ac64ce60fb.png "Screenshot of our very basic frontend")
+![alt text](./images/d3b41637dc9240a484d18661e2b5ce58.png "Screenshot of our very basic frontend")
 
-How to use video
-<video width="320" height="240" controls>
-  <source src="./images/hackathon_capture.mp4" type="video/mp4">
-</video>
+A basic video of how to use it here: [images/walkthrough_video.mp4](images/walkthrough_video.mp4)
+
 ### code
 
-Our game contract source code is [./tripoly/main.mligo](./tripoly/main.mligo).
+Our game contract source code is [tripoly/main.mligo](./tripoly/main.mligo).
 
-The frontend code is [./frontend/index.html](./frontend/index.html)
+The frontend code is [frontend/index.html](./frontend/index.html)
 
 ### next steps for making the game a real product
 
@@ -33,6 +31,9 @@ The frontend code is [./frontend/index.html](./frontend/index.html)
     9. a round based mechanism, so all players are in sync, nobody can roll more than others
     10. calculate saved co2 depending on how many nfts collected
     11. create leaderboard of people who saved the most co2 by supporting projects
+    12. when you join the game it should cost a small fee
+    13. add a refill entrypoint to stock up on funds
+    14. send nft price to the contract instead of owner
 
 
 ### notes

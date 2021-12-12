@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Google News Apis</title>
+    <title>TzConnect Hackathon Game</title>
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <script src="script.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js"></script>
@@ -13,13 +13,8 @@
         var addr = "empty";
         // Initiate DAppClient
         const client = new beacon.DAppClient({
-            name: 'Tripoly Tezos', // Name of the DApp,
+            name: 'Tripoly TzConnect Hackathon', // Name of the DApp,
             disclaimerText: 'This is an optional <b>disclaimer</b>.'
-            // preferredNetwork: beacon.NetworkType.DELPHINET
-            // matrixNodes: ['test.papers.tech', 'test2.papers.tech', 'matrix.papers.tech']
-            // matrixNodes: ['beacon-node-0.papers.tech:8448']
-            // matrixNodes: ['matrix.papers.tech']
-            // matrixNodes: ['beacon.tztip.me']
         })
 
         // Display the active account in the UI
@@ -36,7 +31,7 @@
                 }
             })
         }
-        updateActiveAccount()
+        //updateActiveAccount()
 
         getAddress = () => {
             client.getActiveAccount().then((activeAccount) => {
@@ -49,8 +44,8 @@
             client
                 .requestPermissions({
                     network: {
-                        type: beacon.NetworkType.CUSTOM,
-                        name: "Local Node",
+                        type: beacon.NetworkType.HANGZHOUNET,
+                        name: "hangzhounet",
                         rpcUrl: "https://rpc.hangzhounet.teztnets.xyz"
                     }
                 })
@@ -66,80 +61,14 @@
                 })
         }
 
-        // Add event listener to the button
-        document.getElementById('connect').addEventListener('click', () => {
-            // Check if we have an active account
-            client.getActiveAccount().then((activeAccount) => {
-                if (activeAccount) {
-                    // If we have an active account, send the delegate operation directly
-                    delegate()
-                } else {
-                    // If we don't have an active account, we need to request permissions first and then send the delegate operation
-                    requestPermission((permissions) => {
-                        delegate()
-                        updateActiveAccount()
-                    })
-                }
-            })
-        })
-
-        // Add event listener to the button
-        document.getElementById('requestPermission').addEventListener('click', () => {
-            requestPermission()
-        })
-
-        // Add event listener to the button
-        document.getElementById('reset').addEventListener('click', () => {
-            client.destroy().then(() => {
-                window.location.reload()
-            })
-        })
-
-        document.getElementById('buy_me').addEventListener('click', () => {
-            console.log("support pressed");
-            client
-                .requestOperation({
-                    operationDetails: [
-                        {
-                            kind: beacon.TezosOperationType.TRANSACTION,
-                            amount: '0',
-                            destination: 'KT1JwJcQnzDLbpsLkQ1nyVJvM3Jru8cXJ8fh',
-                            parameters: {
-                                entrypoint: 'support',
-                                value: {
-                                    prim: Unit
-                                }
-                            }
-                        }
-                    ]
-                })
-                .then((response) => console.log(response))
-                .catch((error) => console.log(error))
-        })
-
-
-
-
     </script>
     <script>
 
         var contract = "KT1JwJcQnzDLbpsLkQ1nyVJvM3Jru8cXJ8fh";
-        /*
-        $(document).ready(function () {
-            $.ajax({
-                url: "https://api.better-call.dev/v1/contract/hangzhou2net/" + contract + "/storage"
-            }).then(function (data) {
-                var parsed = data[0]["children"][1]["children"];
-                parsed.forEach((x, i) => $('#news').append("<ul><li>" + x["name"] + " " + x["children"][1]["value"] + "</li></ul>"));
-                console.log(parsed);
 
-            });
-        });
-        */
         console.log(document.fonts.check("12px JetBrains Mono Regular", '🶟'))
 
         $(document).ready(function () {
-            updateActiveAccount();
 
             function tableCreate(position_map) {
                 const body = document.body,
@@ -181,7 +110,6 @@
                 //body.appendChild(tbl);
             }
 
-            //tableCreate();
 
             $('#refresh').click(function () {
                 var ownCurrentPosition = 0;
@@ -225,6 +153,7 @@
                         url: "https://api.better-call.dev/v1/contract/hangzhou2net/" + parsed + "/tokens"
                     }).then(function (dd) {
                         console.log("metadata: " + dd[0])
+                        console.log(dd[0]["display_uri"]);
                         var cid = dd[0]["display_uri"].substring(7);
                         var name = dd[0]["name"];
                         var description = dd[0]["description"];
@@ -249,7 +178,7 @@
                             {
                                 kind: beacon.TezosOperationType.TRANSACTION,
                                 amount: '0',
-                                destination: 'KT1JwJcQnzDLbpsLkQ1nyVJvM3Jru8cXJ8fh',
+                                destination: contract,
                                 parameters: {
                                     entrypoint: 'dice',
                                     value: {
@@ -271,7 +200,7 @@
                             {
                                 kind: beacon.TezosOperationType.TRANSACTION,
                                 amount: '1000000',
-                                destination: 'KT1JwJcQnzDLbpsLkQ1nyVJvM3Jru8cXJ8fh',
+                                destination: contract,
                                 parameters: {
                                     entrypoint: 'support',
                                     value: {
@@ -286,8 +215,42 @@
 
             });
 
+            $('#leave').click(function () {
+                client
+                    .requestOperation({
+                        operationDetails: [
+                            {
+                                kind: beacon.TezosOperationType.TRANSACTION,
+                                amount: '0',
+                                destination: contract,
+                                parameters: {
+                                    entrypoint: 'leave',
+                                    value: {
+                                        prim: "Unit"
+                                    }
+                                }
+                            }
+                        ]
+                    })
+                    .then((response) => console.log(response))
+                    .catch((error) => console.log(error))
+
+            });
+
+            $('#toggle_manual').click(function () {
+                var x = document.getElementById("manual");
+                if (x.style.display === "none") {
+                    x.style.display = "block";
+                } else {
+                    x.style.display = "none";
+                }
+
+            });
+
+
             $('#sync').click(function () {
                 requestPermission();
+                //updateActiveAccount();
             });
         });
 
@@ -320,6 +283,24 @@
 </head>
 
 <body>
+
+    <p>Welcome to Tripoly. The project for the TzConnect Hackathon.</p>
+    <p>A project by Klodie & Marcel &#x1F506</p>
+
+    <div id="manual" style="display:none;">
+        <p>How to play:</p>
+        <p>1. Press sync to connect</p>
+        <p>2. Press update to update the game below</p>
+        <p>3. Press join to join the game.</p>
+        <p>4. Roll the dice to step forward in the game</p>
+        <p>5. Press update again to update the game (give some time for the new information being written to the
+            blockchain)</p>
+        <p>6. Have a look at the nft below, press support if you like it and want to support it by buying the 1/1 nft.
+        </p>
+        <p>7. Leave if you like.</p>
+    </div>
+    </br>
+
     <span>
         Active account:
         <span id="activeAccount"></span>
@@ -328,11 +309,15 @@
     </span>
     </br>
     </br>
+</br>
+
     <input id="sync" type="button" value="sync &#x261D" />
     <input id="refresh" type="button" value="refresh &#x1F504" />
 
     <input id="dice" type="button" value="roll dice &#x1F3B2" />
     <input id="support" type="button" value="support &#x2705" />
+    <input id="leave" type="button" value="leave &#x1F6D1" />
+    <input id="toggle_manual" type="button" value="show/hide manual &#x1f4da" />
 
     </br>
     </br>
@@ -345,6 +330,9 @@
     <div id="board"></div>
     <br>
     <div id="nfts">
+        <p>If you like the project below, please press support &#x2705 in order to buy the token & support the project
+        </p>
+        <br>
         <img id="nft_image"></img>
         <div id="nft_description"></div>
     </div>
