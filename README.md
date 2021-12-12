@@ -2,21 +2,23 @@
 
 We want to create a decentralized board-game on Tezos, to educate people about renewable and sustainable projects in a playful and interactive way. We want to disrupt the game idea of Monopoly and turn its values around, from capitalism and re-shape it for the future of web3 to an open source knowledge game using the conventions and the features of the metaverse.
 
-### setup
-
-Our game contract source code is [here](./tripoly/main.mligo).
-
-We are making use of OpenMinter to mint tokens. Also we are using the nftshop contract from the tacode tutorial.
-
-For this we mint tokens, send them by hand to our contract. Before we do that, we need to mint all tokens and send them to the storage of out contract after we deployed it with the storage containing all our minted token addresses.
-Check [the storage file](./tripoly/main_storage.mligo)
-Once this is complete it's possible to interact with our contract via it's 'Support' entry point. This call needs to have the same amount associated than the price of the token.
-
 ### deployment
 
 The most recent contract is deployed here https://better-call.dev/hangzhou2net/KT1JwJcQnzDLbpsLkQ1nyVJvM3Jru8cXJ8fh
 
 The frontend is running here: https://schwittlick.net/tzconnect_hackathon/
+
+![alt text](./images/54cd9a2eb37d491ebaabd9ac64ce60fb.png "Screenshot of our very basic frontend")
+
+How to use video
+<video width="320" height="240" controls>
+  <source src="./images/hackathon_capture.mp4" type="video/mp4">
+</video>
+### code
+
+Our game contract source code is [./tripoly/main.mligo](./tripoly/main.mligo).
+
+The frontend code is [./frontend/index.html](./frontend/index.html)
 
 ### next steps for making the game a real product
 
@@ -30,6 +32,17 @@ The frontend is running here: https://schwittlick.net/tzconnect_hackathon/
     8. frontend needs to be responsibe and dynamic
     9. a round based mechanism, so all players are in sync, nobody can roll more than others
     10. calculate saved co2 depending on how many nfts collected
+    11. create leaderboard of people who saved the most co2 by supporting projects
+
+
+### notes
+
+We are making use of OpenMinter to mint tokens. Also we are using the nftshop contract from the tacode tutorial.
+
+For this we mint tokens, send them by hand to our contract. Before we do that, we need to mint all tokens and send them to the storage of out contract after we deployed it with the storage containing all our minted token addresses.
+Check [the storage file](./tripoly/main_storage.mligo)
+Once this is complete it's possible to interact with our contract via it's 'Support' entry point. This call needs to have the same amount associated than the price of the token.
+
 
 ### questions
 
