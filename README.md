@@ -15,12 +15,21 @@ Once this is complete it's possible to interact with our contract via it's 'Supp
 ### deployment
 
 The most recent contract is deployed here https://better-call.dev/hangzhou2net/KT1JwJcQnzDLbpsLkQ1nyVJvM3Jru8cXJ8fh
+
 The frontend is running here: https://schwittlick.net/tzconnect_hackathon/
 
-### todo
+### next steps for making the game a real product
 
-1. calculate co2 depending on collected nfts
-2. fix random dice throw
+. balance game parameters (timeout, bounty, amount of playing fields, nft prices etc)
+. per field 3 nfts with multiple editions ( research, proto etc)
+. activity fields (go back to start without bounty etc), to avoid/reduce the possibility for people to play only to get tezos by making rounds
+. market place to trade supported projects (secondary market)
+. how to refill the game? reset mode? 
+. people could be able to vote for which project include in the field
+. fix random number problem
+. frontend needs to be responsibe and dynamic
+. a round based mechanism, so all players are in sync, nobody can roll more than others
+. calculate saved co2 depending on how many nfts collected
 
 ### questions
 
