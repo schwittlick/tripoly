@@ -35,7 +35,7 @@ let max_position : nat = 18n
 let max_position_idx : nat = 17n
 let co2_saved_temporary_constant : nat = 100n
 let bounty_over_start : tez = 1tz
-let five_minutes_in_seconds : int = 300
+let delay_in_seconds : int = 100
 
 let owner : address = ("tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi": address)
 
@@ -92,7 +92,7 @@ let roll_dice(random_number, storage : nat * players_storage) : operation list *
     in
     match Map.find_opt sender_addr storage with
         Some(pl) -> 
-                    if Tezos.now < (pl.last_dice_roll + five_minutes_in_seconds)
+                    if Tezos.now < (pl.last_dice_roll + delay_in_seconds)
                     then 
                         (failwith "You can only roll the dice once every 5 minutes." : operation list * players_storage)
                     else

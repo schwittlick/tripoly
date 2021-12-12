@@ -62,7 +62,7 @@
                                    DROP 5 ;
                                    PUSH string "Please join the game first to play." ;
                                    FAILWITH }
-                                 { PUSH int 300 ;
+                                 { PUSH int 100 ;
                                    SWAP ;
                                    DUP ;
                                    DUG 2 ;
