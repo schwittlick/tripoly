@@ -237,6 +237,28 @@
 
             });
 
+            $('#join').click(function () {
+                client
+                    .requestOperation({
+                        operationDetails: [
+                            {
+                                kind: beacon.TezosOperationType.TRANSACTION,
+                                amount: '0',
+                                destination: contract,
+                                parameters: {
+                                    entrypoint: 'join',
+                                    value: {
+                                        prim: "Unit"
+                                    }
+                                }
+                            }
+                        ]
+                    })
+                    .then((response) => console.log(response))
+                    .catch((error) => console.log(error))
+
+            });
+
             $('#toggle_manual').click(function () {
                 var x = document.getElementById("manual");
                 if (x.style.display === "none") {
@@ -312,6 +334,7 @@
 </br>
 
     <input id="sync" type="button" value="sync &#x261D" />
+    <input id="join" type="button" value="join &#x1f389" />
     <input id="refresh" type="button" value="refresh &#x1F504" />
 
     <input id="dice" type="button" value="roll dice &#x1F3B2" />
