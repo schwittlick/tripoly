@@ -5,148 +5,12 @@
     <title>Google News Apis</title>
     <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
     <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/ipfs/dist/index.min.js"></script>
     <script src="./walletbeacon.min.js"></script>
-
-    <script>
-
-        var contract = "KT1FmuDmRD1to4GcVHSYAZgBEccCNNdjY7Gp";
-        /*
-        $(document).ready(function () {
-            $.ajax({
-                url: "https://api.better-call.dev/v1/contract/hangzhou2net/" + contract + "/storage"
-            }).then(function (data) {
-                var parsed = data[0]["children"][1]["children"];
-                parsed.forEach((x, i) => $('#news').append("<ul><li>" + x["name"] + " " + x["children"][1]["value"] + "</li></ul>"));
-                console.log(parsed);
-
-            });
-        });
-        */
-        console.log(document.fonts.check("12px JetBrains Mono Regular", '🶟'))
-
-        $(document).ready(function () {
-            function tableCreate(position_map) {
-                const body = document.body,
-                    tbl = document.createElement('table');
-                tbl.style.width = '100px';
-                tbl.style.border = '1px solid black';
-                console.log("making table")
-
-                for (let i = 0; i < 1; i++) {
-                    const tr = tbl.insertRow();
-                    for (let j = 0; j < 18; j++) {
-                        if (i === 2 && j === 1) {
-                            break;
-                        } else {
-                            const td = tr.insertCell();
-                            var hit = false;
-                            console.log(position_map);
-                            for (const [key, value] of position_map.entries()) {
-                                if(j === parseInt(value))
-                                {
-                                    td.appendChild(document.createTextNode(key));
-                                    hit = true;
-                                }
-                            }
-
-                            if(!hit)
-                            {
-                                td.appendChild(document.createTextNode(`___`));
-                            }
-                           // if (j === play_idx) {
-                           //     
-                           // } else {
-                               
-                          //  }
-                            td.style.border = '1px solid black';
-                            if (i === 1 && j === 1) {
-                                td.setAttribute('rowSpan', '2');
-                            }
-                        }
-                    }
-                }
-                return tbl;
-                //body.appendChild(tbl);
-            }
-
-            //tableCreate();
-
-            $('#refresh').click(function () {
-
-                $.ajax({
-                    url: "https://api.better-call.dev/v1/contract/hangzhou2net/" + contract + "/storage"
-                }).then(function (data) {
-                    const map1 = new Map();
-                    var parsed = data[0]["children"][1]["children"];
-                    $('#news').empty();
-                    $('#board').empty();
-                    parsed.forEach(function (x, index) {
-                        //console.log(item, index);
-                        
-                        $('#news').append("<p>"+index+"</p>");
-                        x["children"].forEach(function (element, idx) {
-                            $('#news').append("<ul><li>" + x["name"] + " " + element["name"] + " " + element["value"] + "</li></ul>");
-                        }
-                        );
-                        map1.set(x["children"][1]["value"], x["children"][2]["value"]);
-                        console.log(map1);
-                    });
-                    //parsed.forEach((x, i) => $('#news').append("<ul><li>" + x["name"] + " " + x["children"][1]["name"] + " " + x["children"][1]["value"] + "</li></ul>"));
-                    console.log(map1);
-                    var tab = tableCreate(map1);
-                    $(tab).appendTo("#board");
-                    $("<button />").html("document.Element").appendTo("#board");
-                });
-            });
-
-            $('#sync').click(function () {
-                requestPermission();
-            });
-        });
-
-    </script>
-
-    <style>
-        body {
-            font-family: 'JetBrains Mono Regular';
-        }
-
-        p {
-            width: 100%;
-            height: auto;
-            position: relative;
-            margin: 0;
-            padding: 0;
-        }
-
-        span {
-            position: relative;
-            display: inline-block;
-        }
-    </style>
-</head>
-
-<body>
-    <span>
-        Active account:
-        <span id="activeAccount"></span>
-        <span id="activeAccountNetwork"></span>
-        <span id="activeAccountTransport"></span>
-    </span>
-    </br>
-    </br>
-    <input id="refresh" type="button" value="refresh &#x261D" />
-    <input id="sync" type="button" value="sync &#x261D" />
-    </br>
-    </br>
-    <p>current players</p>
-    <div id="news"> </div>
-    <div id="board"></div>
-    <div id="everything"></div>
-
     <script>
 
         window.beaconSdkDebugEnabled = true
+        var addr = "empty";
         // Initiate DAppClient
         const client = new beacon.DAppClient({
             name: 'Tripoly Tezos', // Name of the DApp,
@@ -173,6 +37,12 @@
             })
         }
         updateActiveAccount()
+
+        getAddress = () => {
+            client.getActiveAccount().then((activeAccount) => {
+                addr = activeAccount.address;
+            })
+        }
 
         // Initiate a permission request
         const requestPermission = (callback) => {
@@ -225,19 +95,19 @@
             })
         })
 
-        // Add event listener to the button
-        document.getElementById('contractCall').addEventListener('click', () => {
+        document.getElementById('buy_me').addEventListener('click', () => {
+            console.log("support pressed");
             client
                 .requestOperation({
                     operationDetails: [
                         {
                             kind: beacon.TezosOperationType.TRANSACTION,
                             amount: '0',
-                            destination: 'KT1RxKJyi48W3bZR8HErRiisXZQw19HwLGWj',
+                            destination: 'KT1JwJcQnzDLbpsLkQ1nyVJvM3Jru8cXJ8fh',
                             parameters: {
-                                entrypoint: 'toggleStatus',
+                                entrypoint: 'support',
                                 value: {
-                                    prim: 'True'
+                                    prim: Unit
                                 }
                             }
                         }
@@ -247,7 +117,241 @@
                 .catch((error) => console.log(error))
         })
 
+
+
+
     </script>
+    <script>
+
+        var contract = "KT1JwJcQnzDLbpsLkQ1nyVJvM3Jru8cXJ8fh";
+        /*
+        $(document).ready(function () {
+            $.ajax({
+                url: "https://api.better-call.dev/v1/contract/hangzhou2net/" + contract + "/storage"
+            }).then(function (data) {
+                var parsed = data[0]["children"][1]["children"];
+                parsed.forEach((x, i) => $('#news').append("<ul><li>" + x["name"] + " " + x["children"][1]["value"] + "</li></ul>"));
+                console.log(parsed);
+
+            });
+        });
+        */
+        console.log(document.fonts.check("12px JetBrains Mono Regular", '🶟'))
+
+        $(document).ready(function () {
+            updateActiveAccount();
+
+            function tableCreate(position_map) {
+                const body = document.body,
+                    tbl = document.createElement('table');
+                tbl.style.width = '100px';
+                tbl.style.border = '1px solid black';
+
+                for (let i = 0; i < 1; i++) {
+                    const tr = tbl.insertRow();
+                    for (let j = 0; j < 18; j++) {
+                        if (i === 2 && j === 1) {
+                            break;
+                        } else {
+                            const td = tr.insertCell();
+                            var hit = false;
+                            //console.log(position_map);
+                            for (const [key, value] of position_map.entries()) {
+                                if (j === parseInt(value)) {
+                                    td.appendChild(document.createTextNode(key));
+                                    hit = true;
+                                }
+                            }
+                            if (!hit) {
+                                td.appendChild(document.createTextNode(`___`));
+                            }
+                            // if (j === play_idx) {
+                            //     
+                            // } else {
+
+                            //  }
+                            td.style.border = '1px solid black';
+                            if (i === 1 && j === 1) {
+                                td.setAttribute('rowSpan', '2');
+                            }
+                        }
+                    }
+                }
+                return tbl;
+                //body.appendChild(tbl);
+            }
+
+            //tableCreate();
+
+            $('#refresh').click(function () {
+                var ownCurrentPosition = 0;
+                getAddress();
+                console.log(addr);
+                $.ajax({
+                    url: "https://api.better-call.dev/v1/contract/hangzhou2net/" + contract + "/storage"
+                }).then(function (data) {
+                    const map1 = new Map();
+                    var parsed = data[0]["children"][1]["children"];
+                    $('#news').empty();
+                    $('#nft_image').empty();
+                    $('#nft_description').empty();
+                    $('#board').empty();
+                    parsed.forEach(function (x, index) {
+                        //console.log(item, index);
+
+                        $('#news').append("<p>" + index + " " + x["name"] + "</p>");
+
+                        if (x["name"] === addr) {
+                            ownCurrentPosition = parseInt(x["children"][2]["value"]);
+                            console.log("owncurrent: " + ownCurrentPosition);
+                        }
+
+                        x["children"].forEach(function (element, idx) {
+                            $('#news').append("<ul><li>" + element["name"] + " " + element["value"] + "</li></ul>");
+                        }
+                        );
+                        map1.set(x["children"][1]["value"], x["children"][2]["value"]);
+                        //console.log(map1);
+                    });
+                    //parsed.forEach((x, i) => $('#news').append("<ul><li>" + x["name"] + " " + x["children"][1]["name"] + " " + x["children"][1]["value"] + "</li></ul>"));
+                    //console.log(map1);
+                    var tab = tableCreate(map1);
+                    $(tab).appendTo("#board");
+
+                    // trying to get nft data
+                    var parsed = data[0]["children"][0]["children"][ownCurrentPosition]["children"][1]["value"];
+                    console.log(parsed);
+                    $.ajax({
+                        url: "https://api.better-call.dev/v1/contract/hangzhou2net/" + parsed + "/tokens"
+                    }).then(function (dd) {
+                        console.log("metadata: " + dd[0])
+                        var cid = dd[0]["display_uri"].substring(7);
+                        var name = dd[0]["name"];
+                        var description = dd[0]["description"];
+                        console.log(name);
+                        console.log(description);
+                        console.log(cid);
+                        $('#nft_description').append("<p>name: " + name + "</p>");
+                        $('#nft_description').append("<p>description: " + description + "</p>");
+                        const myImage = document.querySelector('img');
+                        myImage.src = "https://ipfs.io/ipfs/" + cid + "/";
+                    });
+                    //$("<button />").html("document.Element").appendTo("#board");
+                });
+            });
+
+            $('#dice').click(function () {
+                var rnd_nr = (Math.floor(Math.random() * 6) + 1);
+                $('#dice_number').append("<p>you rolled: " + rnd_nr + "</p>");
+                client
+                    .requestOperation({
+                        operationDetails: [
+                            {
+                                kind: beacon.TezosOperationType.TRANSACTION,
+                                amount: '0',
+                                destination: 'KT1JwJcQnzDLbpsLkQ1nyVJvM3Jru8cXJ8fh',
+                                parameters: {
+                                    entrypoint: 'dice',
+                                    value: {
+                                        int: "" + rnd_nr + ""
+                                    }
+                                }
+                            }
+                        ]
+                    })
+                    .then((response) => console.log(response))
+                    .catch((error) => console.log(error))
+
+            });
+
+            $('#support').click(function () {
+                client
+                    .requestOperation({
+                        operationDetails: [
+                            {
+                                kind: beacon.TezosOperationType.TRANSACTION,
+                                amount: '1000000',
+                                destination: 'KT1JwJcQnzDLbpsLkQ1nyVJvM3Jru8cXJ8fh',
+                                parameters: {
+                                    entrypoint: 'support',
+                                    value: {
+                                        prim: "Unit"
+                                    }
+                                }
+                            }
+                        ]
+                    })
+                    .then((response) => console.log(response))
+                    .catch((error) => console.log(error))
+
+            });
+
+            $('#sync').click(function () {
+                requestPermission();
+            });
+        });
+
+    </script>
+
+    <style>
+        body {
+            font-family: 'JetBrains Mono Regular';
+        }
+
+        p {
+            width: 100%;
+            height: auto;
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+
+        #nfts {
+            width: 800px;
+            border-style: dotted;
+            padding: 30px;
+        }
+
+        span {
+            position: relative;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+    <span>
+        Active account:
+        <span id="activeAccount"></span>
+        <span id="activeAccountNetwork"></span>
+        <span id="activeAccountTransport"></span>
+    </span>
+    </br>
+    </br>
+    <input id="sync" type="button" value="sync &#x261D" />
+    <input id="refresh" type="button" value="refresh &#x1F504" />
+
+    <input id="dice" type="button" value="roll dice &#x1F3B2" />
+    <input id="support" type="button" value="support &#x2705" />
+
+    </br>
+    </br>
+    <p id="dice_number"></p>
+
+
+    <p>current players</p>
+    <div id="news"> </div>
+    <p>This is the playing board</p>
+    <div id="board"></div>
+    <br>
+    <div id="nfts">
+        <img id="nft_image"></img>
+        <div id="nft_description"></div>
+    </div>
+
+    <div id="everything"></div>
+
+
 </body>
 
 </html>

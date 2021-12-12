@@ -4,7 +4,7 @@ We want to create a decentralized board-game on Tezos, to educate people about r
 
 ### setup
 
-Our game contract is [here](./tripoly/main.mligo).
+Our game contract source code is [here](./tripoly/main.mligo).
 
 We are making use of OpenMinter to mint tokens. Also we are using the nftshop contract from the tacode tutorial.
 
@@ -14,7 +14,13 @@ Once this is complete it's possible to interact with our contract via it's 'Supp
 
 ### deployment
 
-The most recent contract is deployed here https://better-call.dev/hangzhou2net/KT1FmuDmRD1to4GcVHSYAZgBEccCNNdjY7Gp
+The most recent contract is deployed here https://better-call.dev/hangzhou2net/KT1JwJcQnzDLbpsLkQ1nyVJvM3Jru8cXJ8fh
+The frontend is running here: https://schwittlick.net/tzconnect_hackathon/
+
+### todo
+
+1. calculate co2 depending on collected nfts
+2. fix random dice throw
 
 ### questions
 
@@ -22,8 +28,8 @@ The most recent contract is deployed here https://better-call.dev/hangzhou2net/K
     2. how to make a fake pseudo random nr somehow?
     3. how to add timelock so player can only roll dice once per 5 minutes
     4. how to read the storage from a webapp? prolly an api call to tzkt or bcd, to visualize the current state.
-    5. how can i check for a map as storage in a test?
-    6. how execute and return multiple operations.
+    5. how can i check for a map as storage in a test? (too much for hackathon)
+    6. how execute and return multiple operations. (solved)
 
 #### question 5
 
@@ -55,6 +61,7 @@ The most recent contract is deployed here https://better-call.dev/hangzhou2net/K
     16. included the nft shop code as an endpoint: -> KT1QiT73UPVmoDGZX6Qxpkhrqmsn4UzwarPt. i sent the nft to this address. then i can buy it and it works :)))))
     17. made a check, cant play when nfts not finished initializing. -> KT1H2P27NYGZPrLJfoR2tuxL3HdcXVgDdbWx
     18. deployed the same contract with 18 test nfts as storage -> KT1FmuDmRD1to4GcVHSYAZgBEccCNNdjY7Gp. again, i've sent the nft of the collection KT1CE144SvpAv4iUQb8Zey4M3SKQQEV9DWMd to the contract and bought it via the support endpoint
+    19. final KT1JwJcQnzDLbpsLkQ1nyVJvM3Jru8cXJ8fh
 
 
 ### nft shop iterations (outdated)
@@ -81,7 +88,6 @@ https://anarkrypto.github.io/upload-files-to-ipfs-from-browser-panel/public/#
 
 
 ### nfts
-
 
     Use OpenMinter https://github.com/tqtezos/minter
     With wallet tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi
