@@ -61,6 +61,7 @@ let calculate_saved_co2 (was_over_start: bool) : nat =
 let set_field(index, stock, addr, price, fields_storage : nat * nat * address * tez * fields_storage) : fields_storage =
     if Tezos.sender <> owner then (failwith "Access denied." : fields_storage)
     else 
+    // here we should check whether the token address is a contract. It should fail when it's a wallet address.
     let updated_storage : fields_storage = Map.update index (Some{current_stock=stock; token_address=addr; token_price=price}) fields_storage
     in
     updated_storage
@@ -176,7 +177,7 @@ let support (storage : global_storage) : operation list * fields_storage =
 let payout(tez_amount : tez) : operation list =
     if Tezos.sender <> owner then (failwith "Access denied." : operation list)
     else 
-    if Tezos.balance >= bounty_over_start then
+    if Tezos.balance >= tez_amount then
         let receiver : unit contract =
         match (Tezos.get_contract_opt owner : unit contract option) with
         | Some (contract) -> contract
