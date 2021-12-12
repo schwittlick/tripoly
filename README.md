@@ -34,6 +34,7 @@ The frontend code is [frontend/index.html](./frontend/index.html)
     12. when you join the game it should cost a small fee
     13. add a refill entrypoint to stock up on funds
     14. send nft price to the contract instead of owner
+    15. branding & communication to talk about the project
 
 
 ### notes
