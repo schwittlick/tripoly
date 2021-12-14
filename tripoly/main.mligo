@@ -10,6 +10,7 @@ let max_position_idx : nat = 17n
 let co2_saved_temporary_constant : nat = 100n
 let bounty_over_start : tez = 1tz
 let delay_in_seconds : int = 100
+let debug : bool = true
 
 
 let join_game (player_name, storage : string * players_storage) : players_storage =
@@ -83,7 +84,8 @@ let roll_dice(random_number, storage : nat * players_storage) : operation list *
     // at the moment a "random" dice roll is passed into the contract, that is not ideal, the caller can choose where to step
 
     // make sure it's a number between (incl.) 1 and 6
-    if random_number > 20n || random_number < 1n then
+    // when in debug mode, we can jump more
+    if random_number > if debug then 20n else 6n || random_number < 1n then
         (failwith "You can only step at least 1 and maximum 6 fields." : operation list * players_storage)
     else
     let sender_addr = Tezos.sender 
@@ -144,8 +146,6 @@ let support (storage : global_storage) : operation list * global_storage =
     match Map.find_opt (token_kind_index) token_shop_storage with
         | Some k -> k
         | None -> (failwith "Unknown kind of token" : field)
-    in
-    let debug : bool = true
     in
     if debug then 
         // when debugging, we don't want to send nfts and payments around. just updating player data
