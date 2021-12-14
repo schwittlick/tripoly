@@ -4,6 +4,8 @@ We want to create a decentralized board-game on Tezos, to educate people about r
 
 This is the project presentation pdf: [Tzconnect_hackathon_2021_Klodie_&_Marcel.pdf](Tzconnect_hackathon_2021_Klodie_&_Marcel.pdf)
 
+Each playing field represents a room. An AR experience as the asset of the NFT associated with that field. Maybe we can mint .USDZ and iPhone users can directly jump in the virtual world.
+
 ### deployment
 
 The most recent contract is deployed here https://better-call.dev/hangzhou2net/KT1JwJcQnzDLbpsLkQ1nyVJvM3Jru8cXJ8fh
@@ -50,23 +52,11 @@ Once this is complete it's possible to interact with our contract via it's 'Supp
 
 ### questions
 
-    1. questions, how can ligo dry-run set Tezos.sender? (--sender)
     2. how to make a fake pseudo random nr somehow?
-    3. how to add timelock so player can only roll dice once per 5 minutes
-    4. how to read the storage from a webapp? prolly an api call to tzkt or bcd, to visualize the current state.
-    5. how can i check for a map as storage in a test? (too much for hackathon)
-    6. how execute and return multiple operations. (solved)
-
-#### question 5
-
-    let _test () =
-    let initial_storage = Map.literal [("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Klodie"; position=0n; saved_co2_kilos=0n};] in
-    let (taddr, _, _) = Test.originate main initial_storage 0tez in
-    let contr = Test.to_contract(taddr) in
-    let _r = Test.transfer_to_contract_exn contr (Join ("Marcel")) 1tez  in
-    (Test.get_storage(taddr) = Map.literal [("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Klodie"; position=0n; saved_co2_kilos=0n};("tz1LvSqkwzYkL3MH4TyykEVfL9v95xey6Fxx" : address), {name="Marcel"; position=0n; saved_co2_kilos=0n};])
-
-    let test = _test ()
+    3. how to sync all players, how long is a "round", how to timeout and what kind of bounties for "passive" playing (by joining the game and not rolling the dice, afk, etc)?
+       1. how to make sure the others can continue playing?
+    4. how to write tests for this?!
+    5. 
 ### main.mligo iteration log
 
     first contract -> KT1ChmfSbutmeGLpGqX6J7X1vZpyuh943uuM
@@ -89,31 +79,24 @@ Once this is complete it's possible to interact with our contract via it's 'Supp
     18. deployed the same contract with 18 test nfts as storage -> KT1FmuDmRD1to4GcVHSYAZgBEccCNNdjY7Gp. again, i've sent the nft of the collection KT1CE144SvpAv4iUQb8Zey4M3SKQQEV9DWMd to the contract and bought it via the support endpoint
     19. final KT1JwJcQnzDLbpsLkQ1nyVJvM3Jru8cXJ8fh
 
-
-### nft shop iterations (outdated)
-
-    KT1V8pKF3WjqgWUqCy4Wiho1YrU8oc1SCxoS
-    second one: KT19kzRvG6mpFPn549vohEBWmUa5grhj8BfD
-    third, only with one 1/1 nft: KT1Sw833fCed4X8pQH3wFtDhi9kAixANv35P
-    fourth with only one 1/1: KT1Rc9U3bDU3Ajbsk84X6M8zT442x3X2sECb
-
-### ipfs metadata
-
-https://anarkrypto.github.io/upload-files-to-ipfs-from-browser-panel/public/#
-
-[example metadata json](./tripoly/project1.json)
+    20. add Refill endpoint (kinda cosmetic)
+    21. receive money from nft purchase into contract address
+    22. add supported fields list to player and co2 multiplier to field -> KT1K7yF9Vpst3gBydKf1YAuAWAE3V82Gje8G
+    23. calculating co2 multiplier -> KT1UDTABPDiXU6swCAc3We5DdkBv2hN2kxPX
+    24. adding debug flag and updating supported fields storage of player -> KT1KxSmjBQiuY6yLc5c1KaRgWMrsKZePbt5T
 
 
-### endpoints
+### integration tests?!
 
     ligo dry-run main.mligo main 'Join("Marcel")' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z'
     ligo dry-run main.mligo main 'Leave()' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z'
-    ligo dry-run main.mligo main 'Dice(6)' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z'
+    ligo dry-run main.mligo main 'Dice(6n)' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z'
     ligo dry-run main.mligo main 'Support()' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z' --amount=1
     ligo dry-run main.mligo main 'Payout(10tz)' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z'
+    ligo dry-run main.mligo main 'Refill()' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z' --amount=1
 
 
-### nfts
+### pre-minted nfts (openminter)
 
     Use OpenMinter https://github.com/tqtezos/minter
     With wallet tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi
@@ -130,4 +113,4 @@ https://anarkrypto.github.io/upload-files-to-ipfs-from-browser-panel/public/#
     Created new collection CollectionOfOne (KT1BhPfrdxVMeE1ftePCcH14nF1fyFSdJLxC)
     reated new collection Collection11 (KT1CE144SvpAv4iUQb8Zey4M3SKQQEV9DWMd)
 
-    it worked. necessary was to set the amount in mutez. so weird.
+    Created new collection AR_Project1 (KT1CGj16MiXEpmh5ab1RUY9FZDFuKH2NjtYB)
