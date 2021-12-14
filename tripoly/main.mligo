@@ -35,6 +35,7 @@ type parameter =
 | SetField of nat * nat * address * tez
 | Support
 | Payout of tez
+| Refill
 
 // some pre-defined constants of the game
 let max_position : nat = 18n
@@ -211,7 +212,7 @@ let support (storage : global_storage) : operation list * fields_storage =
 
     // make sure the receiver is valid
     let receiver : unit contract =
-    match (Tezos.get_contract_opt owner : unit contract option) with
+    match (Tezos.get_contract_opt Tezos.self_address : unit contract option) with
         | Some (contract) -> contract
         | None -> (failwith ("Not a contract") : (unit contract))
     in
@@ -272,6 +273,8 @@ let main (p, s : parameter * global_storage) : return_storage =
         | Payout(tez_amount) ->         let res : operation list = payout(tez_amount)
                                         in
                                         (res, s)
+
+        | Refill ->                     (([] : operation list), s)
 
         | SetField (idx, stock, addr, price) ->   
                                         let res : fields_storage = set_field(idx, stock, addr, price, s.0)
