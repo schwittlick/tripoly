@@ -1,26 +1,15 @@
 #include "misc.mligo"
 
-type transfer_destination =
-[@layout:comb]
-{
-  to_ : address;
-  token_id : nat;
-  amount : nat;
-}
- 
-type transfer =
-[@layout:comb]
-{
-  from_ : address;
-  txs : transfer_destination list;
-}
+
+type supported_field = {token_address : address; co2_multiplier : nat}
+type supported_fields = supported_field list
 
 // a record representing a player
-type player = {name : string; position : nat; saved_co2_kilos : nat; last_dice_roll : timestamp}
+type player = {name : string; position : nat; saved_co2_kilos : nat; last_dice_roll : timestamp; supported_fields : supported_fields}
 type players_storage = (address, player) map
 
 // a record representing one playing field on the board
-type field = { current_stock : nat ; token_address : address ; token_price : tez }
+type field = { current_stock : nat ; token_address : address ; token_price : tez ; co2_multiplier : nat }
 type fields_storage = (nat, field) map
 
 // the global storage saved on the contract
@@ -32,7 +21,7 @@ type parameter =
   Join of string
 | Leave
 | Dice of nat
-| SetField of nat * nat * address * tez
+| SetField of nat * nat * address * tez * nat
 | Support
 | Payout of tez
 | Refill
@@ -57,7 +46,7 @@ let join_game (player_name, storage : string * players_storage) : players_storag
     match Map.find_opt sender_addr storage with
         Some(_pl) -> (failwith "You are already playing the game." : players_storage)
                     // create a new player record with some default values
-        | None ->   let new_player : player = {name = player_name; position = 0n; saved_co2_kilos = 0n; last_dice_roll = Tezos.now} 
+        | None ->   let new_player : player = {name = player_name; position = 0n; saved_co2_kilos = 0n; last_dice_roll = Tezos.now; supported_fields = ([] : supported_fields)} 
                     in
                     Map.add sender_addr new_player storage
 
@@ -77,7 +66,7 @@ let calculate_saved_co2 (was_over_start: bool) : nat =
     if was_over_start then co2_saved_temporary_constant else 0n
     
 
-let set_field(index, stock, addr, price, fields_storage : nat * nat * address * tez * fields_storage) : fields_storage =
+let set_field(index, stock, addr, price, co2_multiplier, fields_storage : nat * nat * address * tez * nat * fields_storage) : fields_storage =
     // with this entrypoint the administrator can stock up new nfts in the contract
     // index: the playing field index
     // stock: how many nfts are gonna be in stock
@@ -86,7 +75,7 @@ let set_field(index, stock, addr, price, fields_storage : nat * nat * address * 
     if Tezos.sender <> owner then (failwith "Access denied." : fields_storage)
     else 
     // here we should check whether the token address is a contract. It should fail when it's a wallet address.
-    let updated_storage : fields_storage = Map.update index (Some{current_stock=stock; token_address=addr; token_price=price}) fields_storage
+    let updated_storage : fields_storage = Map.update index (Some{current_stock=stock; token_address=addr; token_price=price; co2_multiplier=co2_multiplier}) fields_storage
     in
     updated_storage
 
@@ -144,7 +133,7 @@ let roll_dice(random_number, storage : nat * players_storage) : operation list *
                         let saved_co2 : nat = calculate_saved_co2(was_over_start)
                         in 
                         // make a new player to with new values to update our storage
-                        let new_player_data : player = {name = pl.name; position = new_pos_modulo; saved_co2_kilos = pl.saved_co2_kilos + saved_co2; last_dice_roll = Tezos.now} 
+                        let new_player_data : player = {name = pl.name; position = new_pos_modulo; saved_co2_kilos = pl.saved_co2_kilos + saved_co2; last_dice_roll = Tezos.now; supported_fields = ([] : supported_fields)} 
                         in
                         // update storage
                         let updated_storage : players_storage = Map.update sender_addr (Some(new_player_data)) storage
@@ -276,7 +265,7 @@ let main (p, s : parameter * global_storage) : return_storage =
 
         | Refill ->                     (([] : operation list), s)
 
-        | SetField (idx, stock, addr, price) ->   
-                                        let res : fields_storage = set_field(idx, stock, addr, price, s.0)
+        | SetField (idx, stock, addr, price, co2_multiplier) ->   
+                                        let res : fields_storage = set_field(idx, stock, addr, price, co2_multiplier, s.0)
                                         in
                                         (([] : operation list), (res, s.1)))
