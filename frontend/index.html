@@ -168,8 +168,6 @@
                             $('#nft_description').append("<p>name: " + name + "</p>");
                             $('#nft_description').append("<p>description: " + description + "</p>");
 
-
-
                             const myImage = document.querySelector('img');
                             myImage.src = "https://infura-ipfs.io/ipfs/" + cid + "/";
                         } else {
@@ -195,11 +193,21 @@
                                 console.log(artifact);
                                 var artifact_cid = artifact['artifactUri'].substring(7);
                                 var model_uri = "https://infura-ipfs.io/ipfs/" + artifact_cid + "/";
+
+                                var name = artifact["name"];
+                                var description = artifact["description"];
+
+                                $('#nft_description').append("<p>name: " + name + "</p>");
+                                $('#nft_description').append("<p>description: " + description + "</p>");
+
+                                const myImage = document.querySelector('img');
+                                myImage.src = model_uri
+
                                 $('#nft_description').append("<p>To enter AR, download model with iPhone</p>");
-                                $('#nft_description').append("<a href=\"" + model_uri +"\" download=\"model.usdz\"> <button type=\"button\">Download</button></a>");
+                                $('#nft_description').append("<a href=\"" + model_uri + "\" download=\"model.usdz\"> <button type=\"button\">Download</button></a>");
                             });
 
-                           
+
                         }
                     });
                     //$("<button />").html("document.Element").appendTo("#board");
