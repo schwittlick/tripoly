@@ -85,7 +85,7 @@ let roll_dice(random_number, storage : nat * players_storage) : operation list *
 
     // make sure it's a number between (incl.) 1 and 6
     // when in debug mode, we can jump more
-    if random_number > if debug then 20n else 6n || random_number < 1n then
+    if random_number > (if debug then 20n else 6n) || random_number < 1n then
         (failwith "You can only step at least 1 and maximum 6 fields." : operation list * players_storage)
     else
     let sender_addr = Tezos.sender 
@@ -93,7 +93,7 @@ let roll_dice(random_number, storage : nat * players_storage) : operation list *
     // check if the caller has joined the game already
     match Map.find_opt sender_addr storage with
         Some(pl) -> // fail and return when the player has already rolled the dice within the last `delay_in_seconds` amount of seconds
-                     if Tezos.now < (pl.last_dice_roll + delay_in_seconds)
+                    if (if debug then false else (Tezos.now < (pl.last_dice_roll + delay_in_seconds)))
                     then 
                         (failwith "You can only roll the dice once every 100 seconds." : operation list * players_storage)
                     else
