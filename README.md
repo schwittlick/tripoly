@@ -4,7 +4,7 @@ We want to create a decentralized board-game on Tezos, to educate people about r
 
 This is the project presentation pdf: [Tzconnect_hackathon_2021_Klodie_&_Marcel.pdf](Tzconnect_hackathon_2021_Klodie_&_Marcel.pdf)
 
-Each playing field represents a room. An AR experience as the asset of the NFT associated with that field. Maybe we can mint .USDZ and iPhone users can directly jump in the virtual world.
+Each playing field represents a room. An AR experience as the asset of the NFT associated with that field. Maybe we can mint .USDZ and iPhone users can directly jump in the virtual world. These models are interactive.
 
 ### deployment
 
@@ -56,7 +56,9 @@ Once this is complete it's possible to interact with our contract via it's 'Supp
     3. how to sync all players, how long is a "round", how to timeout and what kind of bounties for "passive" playing (by joining the game and not rolling the dice, afk, etc)?
        1. how to make sure the others can continue playing?
     4. how to write tests for this?!
-    5. 
+    5. How do we force ipfs download as .usdz file fromt frontend?
+
+
 ### main.mligo iteration log
 
     first contract -> KT1ChmfSbutmeGLpGqX6J7X1vZpyuh943uuM
@@ -84,6 +86,8 @@ Once this is complete it's possible to interact with our contract via it's 'Supp
     22. add supported fields list to player and co2 multiplier to field -> KT1K7yF9Vpst3gBydKf1YAuAWAE3V82Gje8G
     23. calculating co2 multiplier -> KT1UDTABPDiXU6swCAc3We5DdkBv2hN2kxPX
     24. adding debug flag and updating supported fields storage of player -> KT1KxSmjBQiuY6yLc5c1KaRgWMrsKZePbt5T
+
+    25. minted .usdz file, added to game
 
 
 ### integration tests?!

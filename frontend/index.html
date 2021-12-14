@@ -64,7 +64,7 @@
     </script>
     <script>
 
-        var contract = "KT1JwJcQnzDLbpsLkQ1nyVJvM3Jru8cXJ8fh";
+        var contract = "KT1KxSmjBQiuY6yLc5c1KaRgWMrsKZePbt5T";
 
         console.log(document.fonts.check("12px JetBrains Mono Regular", '🶟'))
 
@@ -115,11 +115,13 @@
                 var ownCurrentPosition = 0;
                 getAddress();
                 console.log(addr);
+                console.log(contract);
                 $.ajax({
                     url: "https://api.better-call.dev/v1/contract/hangzhou2net/" + contract + "/storage"
                 }).then(function (data) {
                     const map1 = new Map();
                     var parsed = data[0]["children"][1]["children"];
+                    console.log(parsed);
                     $('#news').empty();
                     $('#nft_image').empty();
                     $('#nft_description').empty();
@@ -145,25 +147,60 @@
                     //console.log(map1);
                     var tab = tableCreate(map1);
                     $(tab).appendTo("#board");
-
+                    console.log(ownCurrentPosition);
                     // trying to get nft data
-                    var parsed = data[0]["children"][0]["children"][ownCurrentPosition]["children"][1]["value"];
+                    console.log(data[0]["children"][0]["children"][ownCurrentPosition]);
+                    var parsed = data[0]["children"][0]["children"][ownCurrentPosition]["children"][2]["value"];
                     console.log(parsed);
                     $.ajax({
                         url: "https://api.better-call.dev/v1/contract/hangzhou2net/" + parsed + "/tokens"
                     }).then(function (dd) {
-                        console.log("metadata: " + dd[0])
-                        console.log(dd[0]["display_uri"]);
-                        var cid = dd[0]["display_uri"].substring(7);
-                        var name = dd[0]["name"];
-                        var description = dd[0]["description"];
-                        console.log(name);
-                        console.log(description);
-                        console.log(cid);
-                        $('#nft_description').append("<p>name: " + name + "</p>");
-                        $('#nft_description').append("<p>description: " + description + "</p>");
-                        const myImage = document.querySelector('img');
-                        myImage.src = "https://ipfs.io/ipfs/" + cid + "/";
+                        console.log(typeof dd[0]);
+                        if ("display_uri" in dd[0]) {
+                            console.log("metadata: " + dd[0])
+                            console.log(dd[0]["display_uri"]);
+                            var cid = dd[0]["display_uri"].substring(7);
+                            var name = dd[0]["name"];
+                            var description = dd[0]["description"];
+                            console.log(name);
+                            console.log(description);
+                            console.log(cid);
+                            $('#nft_description').append("<p>name: " + name + "</p>");
+                            $('#nft_description').append("<p>description: " + description + "</p>");
+
+
+
+                            const myImage = document.querySelector('img');
+                            myImage.src = "https://infura-ipfs.io/ipfs/" + cid + "/";
+                        } else {
+                            console.log(dd[0]);
+                            console.log(Object.keys(dd[0]));
+                            var key = Object.keys(dd[0])[10];
+                            console.log(key);
+                            console.log(dd[0][key]);
+                            console.log(typeof dd[0][key]);
+                            console.log(Object.keys(dd[0][key]));
+                            console.log(typeof dd[0][key]['@@empty']);
+
+                            //var key2 = Object.keys(dd[0][key]);
+                            //console.log(key2);
+                            var cid = dd[0][key]['@@empty'].substring(7);
+                            console.log(cid);
+                            var link = "https://infura-ipfs.io/ipfs/" + cid + "/";
+                            console.log(link);
+                            //window.location.assign(link);
+                            $.ajax({
+                                url: "https://infura-ipfs.io/ipfs/" + cid + "/"
+                            }).then(function (artifact) {
+                                console.log(artifact);
+                                var artifact_cid = artifact['artifactUri'].substring(7);
+                                var model_uri = "https://infura-ipfs.io/ipfs/" + artifact_cid + "/";
+                                $('#nft_description').append("<p>To enter AR, download model with iPhone</p>");
+                                $('#nft_description').append("<a href=\"" + model_uri +"\" download=\"model.usdz\"> <button type=\"button\">Download</button></a>");
+                            });
+
+                           
+                        }
                     });
                     //$("<button />").html("document.Element").appendTo("#board");
                 });
@@ -331,7 +368,7 @@
     </span>
     </br>
     </br>
-</br>
+    </br>
 
     <input id="sync" type="button" value="sync &#x261D" />
     <input id="join" type="button" value="join &#x1f389" />
