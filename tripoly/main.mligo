@@ -1,30 +1,8 @@
+#include "types.mligo"
 #include "misc.mligo"
+#include "admin.mligo"
 
 
-type supported_field = {token_address : address; co2_multiplier : nat}
-type supported_fields = supported_field list
-
-// a record representing a player
-type player = {name : string; position : nat; saved_co2_kilos : nat; last_dice_roll : timestamp; supported_fields : supported_fields}
-type players_storage = (address, player) map
-
-// a record representing one playing field on the board
-type field = { current_stock : nat ; token_address : address ; token_price : tez ; co2_multiplier : nat }
-type fields_storage = (nat, field) map
-
-// the global storage saved on the contract
-type global_storage = fields_storage * players_storage
-type return_storage = operation list * global_storage
-
-// definitions of our entrypoints
-type parameter =
-  Join of string
-| Leave
-| Dice of nat
-| SetField of nat * nat * address * tez * nat
-| Support
-| Payout of tez
-| Refill
 
 // some pre-defined constants of the game
 let max_position : nat = 18n
@@ -32,8 +10,6 @@ let max_position_idx : nat = 17n
 let co2_saved_temporary_constant : nat = 100n
 let bounty_over_start : tez = 1tz
 let delay_in_seconds : int = 100
-
-let owner : address = ("tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi": address)
 
 
 let join_game (player_name, storage : string * players_storage) : players_storage =
@@ -59,26 +35,23 @@ let leave_game (storage : players_storage) : players_storage =
         | None -> (failwith "You are not in the game, yet, no possible to leave." : players_storage)
 
 
-let calculate_saved_co2 (was_over_start: bool) : nat = 
+let sum_co2_mults (l : supported_fields) : nat =
+    let sum (acc, supported_field : nat * supported_field) : nat = acc + supported_field.co2_multiplier
+    in 
+    let sum_of_elements : nat = List.fold sum l 0n
+    in
+    sum_of_elements
+
+let calculate_saved_co2 (player, was_over_start: player * bool) : nat = 
     // this is only a mockup implementation
     // currently we save a constant co2 certificate bounty for the user
     // this should be calculated depending on supported projects / owned nfts
-    if was_over_start then co2_saved_temporary_constant else 0n
-    
-
-let set_field(index, stock, addr, price, co2_multiplier, fields_storage : nat * nat * address * tez * nat * fields_storage) : fields_storage =
-    // with this entrypoint the administrator can stock up new nfts in the contract
-    // index: the playing field index
-    // stock: how many nfts are gonna be in stock
-    // price: the address of the collection holind the nft
-    // fields_storage: the current state of the playing board storage
-    if Tezos.sender <> owner then (failwith "Access denied." : fields_storage)
-    else 
-    // here we should check whether the token address is a contract. It should fail when it's a wallet address.
-    let updated_storage : fields_storage = Map.update index (Some{current_stock=stock; token_address=addr; token_price=price; co2_multiplier=co2_multiplier}) fields_storage
+    //let sum (acc, i : int * int) : int = acc + i
+    //let sum_multiplicators : nat = List.fold sum player.supported_fields 0
+    let sum : nat = sum_co2_mults(player.supported_fields)
     in
-    updated_storage
-
+    if was_over_start then co2_saved_temporary_constant * sum else 0n
+    
 
 let transfer_bounty (over_start: bool) : operation list =
     // this will send a fixed amount of tez from the contract to the caller
@@ -110,7 +83,7 @@ let roll_dice(random_number, storage : nat * players_storage) : operation list *
     // at the moment a "random" dice roll is passed into the contract, that is not ideal, the caller can choose where to step
 
     // make sure it's a number between (incl.) 1 and 6
-    if random_number > 6n || random_number < 1n then
+    if random_number > 20n || random_number < 1n then
         (failwith "You can only step at least 1 and maximum 6 fields." : operation list * players_storage)
     else
     let sender_addr = Tezos.sender 
@@ -130,10 +103,10 @@ let roll_dice(random_number, storage : nat * players_storage) : operation list *
                         in
                         let was_over_start : bool = if new_position > max_position_idx then true else false
                         in
-                        let saved_co2 : nat = calculate_saved_co2(was_over_start)
+                        let saved_co2 : nat = calculate_saved_co2(pl, was_over_start)
                         in 
                         // make a new player to with new values to update our storage
-                        let new_player_data : player = {name = pl.name; position = new_pos_modulo; saved_co2_kilos = pl.saved_co2_kilos + saved_co2; last_dice_roll = Tezos.now; supported_fields = ([] : supported_fields)} 
+                        let new_player_data : player = {name = pl.name; position = new_pos_modulo; saved_co2_kilos = pl.saved_co2_kilos + saved_co2; last_dice_roll = Tezos.now; supported_fields = pl.supported_fields} 
                         in
                         // update storage
                         let updated_storage : players_storage = Map.update sender_addr (Some(new_player_data)) storage
@@ -143,15 +116,22 @@ let roll_dice(random_number, storage : nat * players_storage) : operation list *
         | None -> (failwith "Please join the game first to play." : operation list * players_storage)
     
 
+let update_player_supported_projects (player, player_addr, players_storage, field : player * address * players_storage * field) : players_storage =
+    let new_player_storage = Map.update
+        player_addr
+        (Some { player with supported_fields = ({token_address=field.token_address; co2_multiplier=field.co2_multiplier} :: player.supported_fields)})
+        players_storage
+    in
+    new_player_storage
 
-let support (storage : global_storage) : operation list * fields_storage =
+let support (storage : global_storage) : operation list * global_storage =
     // this endpoint lets you buy an nft. or in other words, support the project you are currently stepped on
     // the price of the token is sent to the owner.. Should be sent to the contract instead
     let sender_addr = Tezos.sender 
     in
     // only continue if the caller is already registered as a player
     match Map.find_opt sender_addr storage.1 with
-        None -> (failwith "You are not in the game." : operation list * fields_storage)
+        None -> (failwith "You are not in the game." : operation list * global_storage)
         | Some(pl) -> 
 
     let token_shop_storage : fields_storage = storage.0
@@ -165,7 +145,14 @@ let support (storage : global_storage) : operation list * fields_storage =
         | Some k -> k
         | None -> (failwith "Unknown kind of token" : field)
     in
-
+    let debug : bool = true
+    in
+    if debug then 
+        // when debugging, we don't want to send nfts and payments around. just updating player data
+        let new_player_storage : players_storage = update_player_supported_projects(pl, sender_addr, storage.1, token_kind)
+        in
+        (([] : operation list), (token_shop_storage, new_player_storage))
+    else
     let () = if Tezos.amount <> token_kind.token_price then
         failwith "Sorry, the token you are trying to purchase has a different price"
     in
@@ -210,29 +197,9 @@ let support (storage : global_storage) : operation list * fields_storage =
     let payout_operation : operation = 
         Tezos.transaction unit amount receiver 
     in
-    ([fa2_operation; payout_operation], token_shop_storage)
-
-
-let payout(tez_amount : tez) : operation list =
-    // this is an admin endpoint. To extract funds from the contract to the above defined owner
-    // parameter is in mutez
-
-    if Tezos.sender <> owner then (failwith "Access denied." : operation list)
-    else 
-    // only continue if the balance of the contract is enough to payout
-    if Tezos.balance >= tez_amount then
-        // the receiver is not the caller, only the owner of the contract
-        let receiver : unit contract =
-        match (Tezos.get_contract_opt owner : unit contract option) with
-            | Some (contract) -> contract
-            | None -> (failwith ("Not a contract") : (unit contract))
-        in
-
-        let payout_operation : operation = 
-            Tezos.transaction unit tez_amount receiver 
-        in
-        [payout_operation]
-    else ([] : operation list)
+    let new_player_storage : players_storage = update_player_supported_projects(pl, sender_addr, storage.1, token_kind)
+    in
+    ([fa2_operation; payout_operation], (token_shop_storage, new_player_storage))
 
 
 let main (p, s : parameter * global_storage) : return_storage =
@@ -255,9 +222,9 @@ let main (p, s : parameter * global_storage) : return_storage =
                                         in
                                         (res.0, (s.0, res.1))
 
-        | Support ->                    let res : operation list * fields_storage = support(s)
+        | Support ->                    let res : operation list * global_storage = support(s)
                                         in
-                                        (res.0, (res.1, s.1))
+                                        (res.0, res.1)
 
         | Payout(tez_amount) ->         let res : operation list = payout(tez_amount)
                                         in
