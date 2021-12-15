@@ -23,3 +23,4 @@ type parameter =
 | Support
 | Payout of tez
 | Refill
+| Clock

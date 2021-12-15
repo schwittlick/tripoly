@@ -3,13 +3,13 @@
 #include "admin.mligo"
 
 
-
 // some pre-defined constants of the game
 let max_position : nat = 18n
 let max_position_idx : nat = 17n
 let co2_saved_temporary_constant : nat = 100n
 let bounty_over_start : tez = 1tz
 let delay_in_seconds : int = 100
+let timeout_in_seconds : int = 86400
 let debug : bool = true
 
 
@@ -79,7 +79,7 @@ let transfer_bounty (over_start: bool) : operation list =
     else ([] : operation list)
  
 
-let roll_dice(random_number, storage : nat * players_storage) : operation list * players_storage = 
+let roll_dice(random_number, sender_addr, storage : nat * address * players_storage) : operation list * players_storage = 
     // this is the main entrypoint to play the game
     // at the moment a "random" dice roll is passed into the contract, that is not ideal, the caller can choose where to step
 
@@ -88,8 +88,6 @@ let roll_dice(random_number, storage : nat * players_storage) : operation list *
     if random_number > (if debug then 20n else 6n) || random_number < 1n then
         (failwith "You can only step at least 1 and maximum 6 fields." : operation list * players_storage)
     else
-    let sender_addr = Tezos.sender 
-    in
     // check if the caller has joined the game already
     match Map.find_opt sender_addr storage with
         Some(pl) -> // fail and return when the player has already rolled the dice within the last `delay_in_seconds` amount of seconds
@@ -125,6 +123,29 @@ let update_player_supported_projects (player, player_addr, players_storage, fiel
         players_storage
     in
     new_player_storage
+
+let clock(storage : players_storage) : operation list * players_storage = 
+    let check_step = fun (acc, addr_pl : (operation list * players_storage) * (address * player)) -> 
+                        let last_interaction : timestamp = addr_pl.1.last_dice_roll
+                        in
+                        let timeout : bool = Tezos.now > (last_interaction + timeout_in_seconds)
+                        in
+                        let default_return : operation list * players_storage = (([] : operation list), acc.1)
+                        in
+                        let result : operation list * players_storage  = if timeout then roll_dice(1n, addr_pl.0, acc.1) else default_return
+                        in
+                        let ol : operation list = result.0
+                        in
+                        let ps : players_storage = result.1
+                        in
+                        let head_opt : operation option = List.head_opt ol
+                        in
+                        match head_opt with
+                            Some(what) -> ((what :: acc.0), ps)
+                            | None -> ((acc.0), ps)
+    in
+    Map.fold check_step storage (([] : operation list), storage)
+    
 
 let support (storage : global_storage) : operation list * global_storage =
     // this endpoint lets you buy an nft. or in other words, support the project you are currently stepped on
@@ -218,7 +239,7 @@ let main (p, s : parameter * global_storage) : return_storage =
                                         in
                                         (([] : operation list), (s.0, res))
 
-        | Dice (random_number) ->       let res : operation list * players_storage = roll_dice (random_number, s.1) 
+        | Dice (random_number) ->       let res : operation list * players_storage = roll_dice (random_number, Tezos.sender, s.1) 
                                         in
                                         (res.0, (s.0, res.1))
 
@@ -231,6 +252,10 @@ let main (p, s : parameter * global_storage) : return_storage =
                                         (res, s)
 
         | Refill ->                     (([] : operation list), s)
+
+        | Clock ->                      let res : operation list * players_storage = clock (s.1) 
+                                        in
+                                        (res.0, (s.0, res.1))
 
         | SetField (idx, stock, addr, price, co2_multiplier) ->   
                                         let res : fields_storage = set_field(idx, stock, addr, price, co2_multiplier, s.0)
