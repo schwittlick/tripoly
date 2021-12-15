@@ -39,6 +39,7 @@ The frontend code is [frontend/index.html](./frontend/index.html)
     13. add a refill entrypoint to stock up on funds
     14. send nft price to the contract instead of owner
     15. branding & communication to talk about the project
+    16. how to add contract metadata to origination? (TZIP-16)
 
 
 ### notes
@@ -88,6 +89,7 @@ Once this is complete it's possible to interact with our contract via it's 'Supp
     24. adding debug flag and updating supported fields storage of player -> KT1KxSmjBQiuY6yLc5c1KaRgWMrsKZePbt5T
 
     25. minted .usdz file, added to game
+    26. implemented a clock endpoint. Every player can call it, when a 24h timeout has happend, all inactive players are stepping forward. This is preparing the general round based playing. -> KT1UGfAS3fFJzJbNVC9t32mmK3k9mgFKCdeE
 
 
 ### integration tests?!
@@ -98,6 +100,7 @@ Once this is complete it's possible to interact with our contract via it's 'Supp
     ligo dry-run main.mligo main 'Support()' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z' --amount=1
     ligo dry-run main.mligo main 'Payout(10tz)' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z'
     ligo dry-run main.mligo main 'Refill()' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z' --amount=1
+    ligo dry-run main.mligo main 'Clock()' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z'
 
 
 ### pre-minted nfts (openminter)
