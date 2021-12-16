@@ -3,14 +3,13 @@
 #include "admin.mligo"
 #include "fa2lib.mligo"
 
-
 // some pre-defined constants of the game
 let max_position : nat = 18n
 let max_position_idx : nat = 17n
 let co2_saved_temporary_constant : nat = 100n
 let bounty_over_start : tez = 1tz
 let delay_in_seconds : int = 100
-let timeout_in_seconds : int = 86400
+let timeout_in_seconds : int = 120 //86400
 let debug : bool = true
 
 
@@ -24,7 +23,7 @@ let join_game (player_name, storage : string * players_storage) : players_storag
     match Map.find_opt sender_addr storage with
         Some(_pl) -> (failwith "You are already playing the game." : players_storage)
                     // create a new player record with some default values
-        | None ->   let new_player : player = {name = player_name; position = 0n; saved_co2_kilos = 0n; last_dice_roll = Tezos.now; supported_fields = ([] : supported_fields)} 
+        | None ->   let new_player : player = {name = player_name; position = 0n; saved_co2_kilos = 0n; last_dice_roll = Tezos.now; current_step = 0n; supported_fields = ([] : supported_fields)} 
                     in
                     Map.add sender_addr new_player storage
 
@@ -43,6 +42,7 @@ let sum_co2_mults (l : supported_fields) : nat =
     let sum_of_elements : nat = List.fold sum l 0n
     in
     sum_of_elements
+
 
 let calculate_saved_co2 (player, was_over_start: player * bool) : nat = 
     // this is only a mockup implementation
@@ -80,7 +80,7 @@ let transfer_bounty (over_start: bool) : operation list =
     else ([] : operation list)
  
 
-let roll_dice(random_number, sender_addr, storage : nat * address * players_storage) : operation list * players_storage = 
+let roll_dice(random_number, sender_addr, storage, global_step : nat * address * players_storage * nat) : operation list * players_storage = 
     // this is the main entrypoint to play the game
     // at the moment a "random" dice roll is passed into the contract, that is not ideal, the caller can choose where to step
 
@@ -92,9 +92,11 @@ let roll_dice(random_number, sender_addr, storage : nat * address * players_stor
     // check if the caller has joined the game already
     match Map.find_opt sender_addr storage with
         Some(pl) -> // fail and return when the player has already rolled the dice within the last `delay_in_seconds` amount of seconds
-                    if (if debug then false else (Tezos.now < (pl.last_dice_roll + delay_in_seconds)))
+                    //if (if debug then false else (Tezos.now < (pl.last_dice_roll + delay_in_seconds)))
+                    // changes the timeout per dice into the round based mechanism. a player can only roll the dice when the next round started (the global_step game step advanced)
+                    if pl.current_step >= global_step
                     then 
-                        (failwith "You can only roll the dice once every 100 seconds." : operation list * players_storage)
+                        (failwith "You have to wait until everybody played and a new round is over. Come back in a few minutes." : operation list * players_storage)
                     else
                         let random_number : nat = random_number //Tezos.now mod 6 in 
                         in 
@@ -107,7 +109,7 @@ let roll_dice(random_number, sender_addr, storage : nat * address * players_stor
                         let saved_co2 : nat = calculate_saved_co2(pl, was_over_start)
                         in 
                         // make a new player to with new values to update our storage
-                        let new_player_data : player = {name = pl.name; position = new_pos_modulo; saved_co2_kilos = pl.saved_co2_kilos + saved_co2; last_dice_roll = Tezos.now; supported_fields = pl.supported_fields} 
+                        let new_player_data : player = {name = pl.name; position = new_pos_modulo; saved_co2_kilos = pl.saved_co2_kilos + saved_co2; last_dice_roll = Tezos.now; current_step = pl.current_step + 1n; supported_fields = pl.supported_fields} 
                         in
                         // update storage
                         let updated_storage : players_storage = Map.update sender_addr (Some(new_player_data)) storage
@@ -125,16 +127,21 @@ let update_player_supported_projects (player, player_addr, players_storage, fiel
     in
     new_player_storage
 
-let clock(storage : players_storage) : operation list * players_storage = 
-    // this function can be called by 
+
+let clock(storage, global_step : players_storage * step) : operation list * players_storage * step = 
+    // this function can be called by anybody
+    // it looks through all players, when they are timed out, automatically roll the dice for them (1 step only)
+    // when all players are stepped forward, the game advances, the next round started. all players can roll again.
     let check_step = fun (acc, addr_pl : (operation list * players_storage) * (address * player)) -> 
                         let last_interaction : timestamp = addr_pl.1.last_dice_roll
                         in
                         let timeout : bool = Tezos.now > (last_interaction + timeout_in_seconds)
                         in
+                        let can_step_forward : bool = addr_pl.1.current_step < global_step
+                        in
                         let default_return : operation list * players_storage = (([] : operation list), acc.1)
                         in
-                        let result : operation list * players_storage  = if timeout then roll_dice(1n, addr_pl.0, acc.1) else default_return
+                        let result : operation list * players_storage  = if timeout && can_step_forward then roll_dice(1n, addr_pl.0, acc.1, global_step) else default_return
                         in
                         let ol : operation list = result.0
                         in
@@ -146,7 +153,16 @@ let clock(storage : players_storage) : operation list * players_storage =
                             Some(what) -> ((what :: acc.0), ps)
                             | None -> ((acc.0), ps)
     in
-    Map.fold check_step storage (([] : operation list), storage)
+    let result : operation list * players_storage = Map.fold check_step storage (([] : operation list), storage)
+    in
+    let check_all_players_current_step = fun (i, player : nat * (address * player)) -> if player.1.current_step <> global_step then i + 1n else i + 0n
+    in
+    let number_of_players_who_have_not_played_yet : nat = Map.fold check_all_players_current_step result.1 0n
+    in
+    if number_of_players_who_have_not_played_yet = 0n then
+        (result.0, result.1, global_step + 1n)
+    else
+        (result.0, result.1, global_step)
     
 
 let support (storage : global_storage) : operation list * global_storage =
@@ -156,11 +172,12 @@ let support (storage : global_storage) : operation list * global_storage =
     in
     // only continue if the caller is already registered as a player
     match Map.find_opt sender_addr storage.1 with
-        None -> (failwith "You are not in the game." : operation list * global_storage)
+        None -> failwith "You are not in the game." 
         | Some(pl) -> 
 
     let token_shop_storage : fields_storage = storage.0
     in
+    
     // you can only buy the nft of your current position
     let token_kind_index : nat = pl.position
     in
@@ -174,13 +191,13 @@ let support (storage : global_storage) : operation list * global_storage =
         // when debugging, we don't want to send nfts and payments around. just updating player data
         let new_player_storage : players_storage = update_player_supported_projects(pl, sender_addr, storage.1, token_kind)
         in
-        (([] : operation list), (token_shop_storage, new_player_storage))
+        (([] : operation list), (token_shop_storage, new_player_storage, storage.2))
     else
     let result : operation list * fields_storage = transfer(token_kind, token_kind_index, token_shop_storage)
     in
     let new_player_storage : players_storage = update_player_supported_projects(pl, sender_addr, storage.1, token_kind)
     in
-    (result.0, (result.1, new_player_storage))
+    (result.0, (result.1, new_player_storage, storage.2))
 
 
 let main (p, s : parameter * global_storage) : return_storage =
@@ -193,15 +210,15 @@ let main (p, s : parameter * global_storage) : return_storage =
     (match p with
         Join (player_name) ->           let res : players_storage = join_game (player_name, s.1)
                                         in
-                                        (([] : operation list), (s.0, res))
+                                        (([] : operation list), (s.0, res, s.2))
 
         | Leave ->                      let res : players_storage = leave_game (s.1)
                                         in
-                                        (([] : operation list), (s.0, res))
+                                        (([] : operation list), (s.0, res, s.2))
 
-        | Dice (random_number) ->       let res : operation list * players_storage = roll_dice (random_number, Tezos.sender, s.1) 
+        | Dice (random_number) ->       let res : operation list * players_storage = roll_dice (random_number, Tezos.sender, s.1, s.2) 
                                         in
-                                        (res.0, (s.0, res.1))
+                                        (res.0, (s.0, res.1, s.2))
 
         | Support ->                    let res : operation list * global_storage = support(s)
                                         in
@@ -213,11 +230,11 @@ let main (p, s : parameter * global_storage) : return_storage =
 
         | Refill ->                     (([] : operation list), s)
 
-        | Clock ->                      let res : operation list * players_storage = clock (s.1) 
+        | Clock ->                      let res : operation list * players_storage * step = clock (s.1, s.2) 
                                         in
-                                        (res.0, (s.0, res.1))
+                                        (res.0, (s.0, res.1, res.2))
 
         | SetField (idx, stock, addr, price, co2_multiplier) ->   
                                         let res : fields_storage = set_field(idx, stock, addr, price, co2_multiplier, s.0)
                                         in
-                                        (([] : operation list), (res, s.1)))
+                                        (([] : operation list), (res, s.1, s.2)))

@@ -26,6 +26,22 @@ Map.literal
             position=0n; 
             saved_co2_kilos=0n; 
             last_dice_roll=("2020-10-11t13:55:10Z" : timestamp); 
+            current_step=0n;
+            supported_fields = 
+            [
+                {
+                    token_address=("KT1AdxDtLNkmoFEiWcWSvPZ44JXnby6gFeF2" : address); 
+                    co2_multiplier=2n
+                }
+            ]
+        };
+        ("tz1Rv9NDodukAWpYfHcx1HQStFoeHSZmdpFF" : address), 
+        {
+            name="Marcel2"; 
+            position=0n; 
+            saved_co2_kilos=0n; 
+            last_dice_roll=("2020-10-11t13:55:10Z" : timestamp); 
+            current_step=0n;
             supported_fields = 
             [
                 {
@@ -34,5 +50,6 @@ Map.literal
                 }
             ]
         }
-    ]
+    ],
+    1n
 )
