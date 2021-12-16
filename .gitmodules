@@ -1,3 +1,6 @@
 [submodule "openminter"]
 	path = openminter
 	url = git@github.com:schwittlick/minter.git
+[submodule "webapp"]
+	path = webapp
+	url = git@github.com:vin-ni/tzconnect-hackathon-2021.git
