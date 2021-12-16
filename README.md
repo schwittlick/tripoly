@@ -10,7 +10,7 @@ Each playing field represents a room. An AR experience as the asset of the NFT a
 
 The most recent contract is deployed here https://better-call.dev/hangzhou2net/KT1JwJcQnzDLbpsLkQ1nyVJvM3Jru8cXJ8fh
 
-The frontend is running here: https://schwittlick.net/tzconnect_hackathon/
+The frontend is running here: https://tripoly.vinzenzaubry.com/
 
 ![alt text](./images/d3b41637dc9240a484d18661e2b5ce58.png "Screenshot of our very basic frontend")
 
@@ -90,6 +90,11 @@ Once this is complete it's possible to interact with our contract via it's 'Supp
 
     25. minted .usdz file, added to game
     26. implemented a clock endpoint. Every player can call it, when a 24h timeout has happend, all inactive players are stepping forward. This is preparing the general round based playing. -> KT1UGfAS3fFJzJbNVC9t32mmK3k9mgFKCdeE
+    27. next iteration (with debug off), refactored the fa2 sender a little. kinda needing tests now -> KT1PFudVgJVPjwZWQ9TUYk23xFhppFZXCAYW
+    28. real round based playing, one round is 120s. debug on -> KT1KWP9JYFaTex983aXjigMA4AmC9Erurgs8
+    29. fix little operator bug -> KT1VzkKaXqVUa8MgeCNw3HeonRmQmzQkpUho
+    30. fix another operator bug in round playing mechanism -> KT1Hhxedz2DHSz24RLiXubLQv9u43uJbuNUy
+    31. fix bug that user would get auto-dice-roll bc it's timed out, but already stepped in this round -> KT1RNeMZvAf1ce6HpWw37GmLxCSZrUJL8QFM
 
 
 ### integration tests?!
