@@ -10,20 +10,25 @@ let co2_saved_temporary_constant : nat = 100n
 let bounty_over_start : tez = 1tz
 let delay_in_seconds : int = 100
 let timeout_in_seconds : int = 120 //86400
-let debug : bool = true
+let debug : bool = false
 
 
-let join_game (player_name, storage : string * players_storage) : players_storage =
+let join_game (player_name, storage, global_step : string * players_storage * step) : players_storage =
     // you have to join the game before playing (dice roll endpoint)
     // when not entering a name, we will fail & return
     if size_op(player_name) < 1n then (failwith "Please enter a name." : players_storage) else
-
+    let new_step : nat option = Michelson.is_nat (global_step - 1n)
+    in
+    let final_new_step : nat = match new_step with
+        Some(newstep) -> newstep
+        | None -> 0n
+    in
     // only join the game when you are not in the game already
     let sender_addr = Tezos.sender in
     match Map.find_opt sender_addr storage with
         Some(_pl) -> (failwith "You are already playing the game." : players_storage)
                     // create a new player record with some default values
-        | None ->   let new_player : player = {name = player_name; position = 0n; saved_co2_kilos = 0n; last_dice_roll = Tezos.now; current_step = 0n; supported_fields = ([] : supported_fields)} 
+        | None ->   let new_player : player = {name = player_name; position = 0n; saved_co2_kilos = 0n; last_dice_roll = Tezos.now; current_step = final_new_step; supported_fields = ([] : supported_fields)} 
                     in
                     Map.add sender_addr new_player storage
 
@@ -208,7 +213,7 @@ let main (p, s : parameter * global_storage) : return_storage =
     // currently the construction of the return_storage is a bit complicated and could be optimized
     if nft_count < max_position then (failwith ("There are not enough NFTs in the storage, yet.") : (return_storage)) else
     (match p with
-        Join (player_name) ->           let res : players_storage = join_game (player_name, s.1)
+        Join (player_name) ->           let res : players_storage = join_game (player_name, s.1, s.2)
                                         in
                                         (([] : operation list), (s.0, res, s.2))
 
