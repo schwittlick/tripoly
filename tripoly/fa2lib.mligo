@@ -33,8 +33,10 @@ let transfer(token_kind, token_kind_index, token_shop_storage : field * nat * fi
     in
 
     // make sure the receiver is valid
+    // this should be the creator of the nft at some point
+    // how to get the creator tho?
     let receiver : unit contract =
-    match (Tezos.get_contract_opt Tezos.self_address : unit contract option) with
+    match (Tezos.get_contract_opt owner : unit contract option) with
         | Some (contract) -> contract
         | None -> (failwith ("Not a contract") : (unit contract))
     in
