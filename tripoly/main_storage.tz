@@ -1,28 +1,24 @@
-(Pair (Pair { Elt 0 (Pair (Pair 2 1) "KT1AdxDtLNkmoFEiWcWSvPZ44JXnby6gFeF2" 1000000) ;
-              Elt 1 (Pair (Pair 2 1) "KT1XTqhcUGqgsbFQ1KVN8sNWBfK9gKpTKHfF" 1000000) ;
-              Elt 2 (Pair (Pair 2 1) "KT1WYYJRuaz5HeiwWLJUMcX93bnf41jnGwrJ" 1000000) ;
-              Elt 3 (Pair (Pair 2 1) "KT1NBGTJXV1y3nqPosZhmFuY3JiTNTQLkmcv" 1000000) ;
-              Elt 4 (Pair (Pair 2 1) "KT1GtseVfXLpfXPjMQS2D8ZauYuie786gSck" 1000000) ;
-              Elt 5 (Pair (Pair 2 1) "KT1Vho1KCLk6BKakfjC1ob9aqYdhPhTbU7W7" 1000000) ;
-              Elt 6 (Pair (Pair 2 1) "KT1CVT4X3o3rpXCuj7fU4Gtc6rDp6fouEYjk" 1000000) ;
-              Elt 7 (Pair (Pair 2 1) "KT1BBGPifmMgzi8KZBCxaDyHYQ7UB4UUXyoC" 1000000) ;
-              Elt 8 (Pair (Pair 2 1) "KT1PqDDz4N6Zd7nMc52CfQhLBD1CfzqyVATv" 1000000) ;
-              Elt 9 (Pair (Pair 2 1) "KT198x4kRxHFBtGwYZ8i6aqpiqwMwNKRMX7K" 1000000) ;
-              Elt 10 (Pair (Pair 2 1) "KT1GHcEecB62XYEdgqGYHHYZjbY5n5x4ZUTZ" 1000000) ;
-              Elt 11 (Pair (Pair 2 1) "KT1MGd2twTATiPz9TRkm6YyYBxoSddnmvAh4" 1000000) ;
-              Elt 12 (Pair (Pair 2 1) "KT1T19ZxPzfn7N5mXrBiQSTXFrjiFTRbqqsr" 1000000) ;
-              Elt 13 (Pair (Pair 2 1) "KT1Gh8XpmDxU2XZ73PBAxq4Y28gZcRBtRNAP" 1000000) ;
-              Elt 14 (Pair (Pair 2 1) "KT1XmaF7QXwpdDrQC4we7bvsPVizmJcBQiPT" 1000000) ;
-              Elt 15 (Pair (Pair 2 1) "KT1QydvfA1oibC4bUJQYtUDDVowd9coqzz6F" 1000000) ;
-              Elt 16 (Pair (Pair 2 1) "KT1ELcpcpupY3sA3FErZpKVz63ExgyGYDQCk" 1000000) ;
-              Elt 17 (Pair (Pair 2 1) "KT1PAb9nzLoqNWYW3TJNafkjnGhsdQZZVWPZ" 1000000) }
+(Pair (Pair { Elt 0 (Pair (Pair 1 1) "KT1F797aBk3XdeNmV9ZiUj8tHN1DBwTUtXjC" 1000000) ;
+              Elt 1 (Pair (Pair 2 1) "KT1M767shTx5PR6VMfheVjt7HJ4Qi3uVsF8D" 2000000) ;
+              Elt 2 (Pair (Pair 3 1) "KT1W3mb6j4h8XR93apmaVYQHeMe8JkcVxxdy" 4000000) ;
+              Elt 3 (Pair (Pair 2 1) "KT1AxxUx4uB2LyAEskPX9UhyKaetRXBiGUCS" 3000000) ;
+              Elt 4 (Pair (Pair 5 1) "KT1ExsK4LqrLAARr6nt5FqHi8u8rm63JgsLo" 1000000) ;
+              Elt 5 (Pair (Pair 4 1) "KT1PPmzheuUsBHg1wiveMsWjBhXHYUxS91xh" 5000000) ;
+              Elt 6 (Pair (Pair 2 1) "KT1T937ReyqLY2YmS2p92qD24tFQntG9W5wX" 6000000) ;
+              Elt 7 (Pair (Pair 1 1) "KT1WvYZGvo4acoPbys94eLU99maySmmWEC9k" 2000000) ;
+              Elt 8 (Pair (Pair 7 1) "KT1Vs2NaC9vbTChrHxcrBuqGDisdHGrWAe7W" 3000000) ;
+              Elt 9 (Pair (Pair 4 1) "KT1WCXQMuTH8HMrztQ8mLC1Sq8HjnXVTfibf" 4000000) ;
+              Elt 10 (Pair (Pair 2 1) "KT1AShFUyHPaKBARxgPgugfvAUJjab9M73w5" 1000000) ;
+              Elt 11 (Pair (Pair 1 1) "KT1LMeAvV5LsrjH5djCVM4rGMKKzTkV8eZnR" 3000000) ;
+              Elt 12 (Pair (Pair 3 1) "KT18p6zGCdkngHCGU8EQVwRW5YT7SDbJvL4h" 4000000) ;
+              Elt 13 (Pair (Pair 4 1) "KT1Sc48nMZfg2Dr8hY193TCohYcrQ2VoRBsn" 1000000) ;
+              Elt 14 (Pair (Pair 2 1) "KT1RiVwQXqw1Ub5wAWQCui9SGsNAF4niURj2" 5000000) ;
+              Elt 15 (Pair (Pair 3 1) "KT1EK257m8eRCsUVNFdifxYisngPU4QtRyuX" 2000000) ;
+              Elt 16 (Pair (Pair 4 1) "KT1C7vPzetUqmyn9Tqgyr86sYMUfSAt59G2M" 1000000) ;
+              Elt 17 (Pair (Pair 10 1) "KT1BUgXTL4og4fsM3geubPGG8gaJZzVSP7ir" 10000000) }
             { Elt "tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi"
-                  (Pair (Pair (Pair 0 "2020-10-11T13:55:10Z") "Marcel" 0)
-                        0
-                        { Pair 2 "KT1AdxDtLNkmoFEiWcWSvPZ44JXnby6gFeF2" }) ;
+                  (Pair (Pair (Pair 0 "2020-10-11T13:55:10Z") "Marcel" 0) 0 {}) ;
               Elt "tz1Rv9NDodukAWpYfHcx1HQStFoeHSZmdpFF"
-                  (Pair (Pair (Pair 0 "2020-10-11T13:55:10Z") "Marcel2" 0)
-                        0
-                        { Pair 2 "KT1AdxDtLNkmoFEiWcWSvPZ44JXnby6gFeF2" }) })
+                  (Pair (Pair (Pair 0 "2020-10-11T13:55:10Z") "Marcel2" 0) 0 {}) })
       1)
 

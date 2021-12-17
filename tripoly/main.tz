@@ -15,7 +15,7 @@
   code { PUSH address "tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi" ;
          PUSH nat 18 ;
          PUSH mutez 1000000 ;
-         PUSH bool True ;
+         PUSH bool False ;
          DUP 3 ;
          DUG 2 ;
          DUP ;
@@ -325,9 +325,11 @@
                         { SWAP ;
                           DUP ;
                           DUG 2 ;
+                          CDR ;
+                          DUP 3 ;
                           CAR ;
                           CDR ;
-                          SWAP ;
+                          DIG 2 ;
                           PUSH nat 1 ;
                           SWAP ;
                           DUP ;
@@ -335,9 +337,13 @@
                           SIZE ;
                           COMPARE ;
                           LT ;
-                          IF { DROP 2 ; PUSH string "Please enter a name." ; FAILWITH }
-                             { SENDER ;
-                               DUP 3 ;
+                          IF { DROP 3 ; PUSH string "Please enter a name." ; FAILWITH }
+                             { PUSH nat 1 ;
+                               DIG 3 ;
+                               SUB ;
+                               ISNAT ;
+                               SENDER ;
+                               DUP 4 ;
                                SWAP ;
                                DUP ;
                                DUG 2 ;
@@ -347,10 +353,11 @@
                                    PUSH nat 0 ;
                                    PAIR ;
                                    PUSH nat 0 ;
-                                   DIG 3 ;
+                                   DIG 4 ;
                                    PAIR ;
                                    NOW ;
-                                   PUSH nat 0 ;
+                                   DIG 4 ;
+                                   IF_NONE { PUSH nat 0 } {} ;
                                    PAIR ;
                                    PAIR ;
                                    PAIR ;
@@ -361,7 +368,7 @@
                                    SOME ;
                                    SWAP ;
                                    UPDATE }
-                                 { DROP 4 ; PUSH string "You are already playing the game." ; FAILWITH } } ;
+                                 { DROP 5 ; PUSH string "You are already playing the game." ; FAILWITH } } ;
                           SWAP ;
                           DUP ;
                           DUG 2 ;
@@ -484,8 +491,7 @@
                           PAIR ;
                           NIL operation ;
                           PAIR }
-                        { DIG 4 ;
-                          DROP 2 ;
+                        { DROP ;
                           SENDER ;
                           SWAP ;
                           DUP ;
@@ -497,7 +503,7 @@
                           DUG 2 ;
                           GET ;
                           IF_NONE
-                            { DROP 4 ; PUSH string "You are not in the game." ; FAILWITH }
+                            { DROP 5 ; PUSH string "You are not in the game." ; FAILWITH }
                             { DUP 3 ;
                               CAR ;
                               CAR ;
@@ -517,7 +523,8 @@
                               IF_NONE { PUSH string "Unknown kind of token" ; FAILWITH } {} ;
                               DIG 7 ;
                               IF { SWAP ;
-                                   DROP ;
+                                   DIG 7 ;
+                                   DROP 2 ;
                                    DUP 5 ;
                                    CAR ;
                                    CDR ;
@@ -607,7 +614,7 @@
                                    DIG 3 ;
                                    CONS ;
                                    TRANSFER_TOKENS ;
-                                   SELF_ADDRESS ;
+                                   DIG 7 ;
                                    CONTRACT unit ;
                                    IF_NONE { PUSH string "Not a contract" ; FAILWITH } {} ;
                                    AMOUNT ;

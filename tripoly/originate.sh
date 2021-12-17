@@ -7,4 +7,4 @@
 
 ligo compile-contract main.mligo main --output-file=main.tz
 ligo compile-storage main.mligo main "`cat main_storage.mligo`" --output-file=main_storage.tz
-tezos-client -E https://rpc.hangzhounet.teztnets.xyz originate contract main transferring 5 from schwittlick-testing running main.tz --init "`cat main_storage.tz`" --burn-cap 2 --force
+tezos-client -E https://rpc.hangzhounet.teztnets.xyz originate contract main transferring 100 from schwittlick-testing running main.tz --init "`cat main_storage.tz`" --burn-cap 2 --force
