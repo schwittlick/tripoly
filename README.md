@@ -8,11 +8,11 @@ Each playing field represents a room. An AR experience as the asset of the NFT a
 
 ### deployment
 
-The most recent contract is deployed here https://better-call.dev/hangzhou2net/KT1JwJcQnzDLbpsLkQ1nyVJvM3Jru8cXJ8fh
+The most recent contract is deployed here https://better-call.dev/hangzhou2net/KT19hqf8T654T3sFxRJpsULTtimqyGYK7Lhk
 
 The frontend is running here: https://tripoly.vinzenzaubry.com/
 
-![alt text](./images/d3b41637dc9240a484d18661e2b5ce58.png "Screenshot of our very basic frontend")
+![alt text](./images/e6d7affdb45a4b609ed13bf072e36520.png "Screenshot of the game board of Tripoly")
 
 A basic video of how to use it here: [images/walkthrough_video.mp4](images/walkthrough_video.mp4)
 
@@ -58,6 +58,7 @@ Once this is complete it's possible to interact with our contract via it's 'Supp
        1. how to make sure the others can continue playing?
     4. how to write tests for this?!
     5. How do we force ipfs download as .usdz file fromt frontend?
+    6. Can openMinter make it possible to wrap a file in a folder, so it can be downloaded easily with the existing file extension? Like https://infura-ipfs.io/ipfs/bafybeichybrqgboixxgcf4hgnxzmcgxsolwqhtwudyruze6crawka2sad4
 
 
 ### main.mligo iteration log
@@ -95,6 +96,9 @@ Once this is complete it's possible to interact with our contract via it's 'Supp
     29. fix little operator bug -> KT1VzkKaXqVUa8MgeCNw3HeonRmQmzQkpUho
     30. fix another operator bug in round playing mechanism -> KT1Hhxedz2DHSz24RLiXubLQv9u43uJbuNUy
     31. fix bug that user would get auto-dice-roll bc it's timed out, but already stepped in this round -> KT1RNeMZvAf1ce6HpWw37GmLxCSZrUJL8QFM
+    32. FINALFINAL with final AR nfts -> KT1PZNb78PUiDRXmFGXPEyGaiocpk623CkEJ
+    33. meh, bug in payment transfer. finalfinalfinal -> KT1X87rN7Hu6ZY4uK8ayQ9LgBXezHtd7nkZG
+    34. some other small join bug -> KT19hqf8T654T3sFxRJpsULTtimqyGYK7Lhk
 
 
 ### integration tests?!
