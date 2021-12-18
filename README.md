@@ -1,4 +1,4 @@
-## tripoly
+## Tripoly
 
 We want to create a decentralized board-game on Tezos, to educate people about renewable and sustainable projects in a playful and interactive way. We want to disrupt the game idea of Monopoly and turn its values around, from capitalism and re-shape it for the future of web3 to an open source knowledge game using the conventions and the features of the metaverse.
 
@@ -6,7 +6,7 @@ This is the project presentation pdf: [Tzconnect_hackathon_2021_Klodie_&_Marcel.
 
 Each playing field represents a room. An AR experience as the asset of the NFT associated with that field. Maybe we can mint .USDZ and iPhone users can directly jump in the virtual world. These models are interactive.
 
-### deployment
+### Deployment
 
 The most recent contract is deployed here https://better-call.dev/hangzhou2net/KT19hqf8T654T3sFxRJpsULTtimqyGYK7Lhk
 
@@ -16,39 +16,67 @@ The frontend is running here: https://tripoly.vinzenzaubry.com/
 
 A basic video of how to use it here: [images/walkthrough_video.mp4](images/walkthrough_video.mp4)
 
-### code
+### Code
 
-Our game contract source code is [tripoly/main.mligo](./tripoly/main.mligo).
+Our game contract source code is [here](./tripoly/main.mligo)
 
-The frontend code is [frontend/index.html](./frontend/index.html)
+The frontend code is [here](/webapp/)
 
-### next steps for making the game a real product
+
+#### Endpoints
+
+##### Join(str)
+Join the game and pass your player name
+
+##### Leave
+Leave the game
+
+##### Dice(rolled_number : nat)
+Once you are in the game (joined) you can roll the dice and advance on the playing field
+
+
+##### Support
+You can support the project of your current position. This token has an amount, you will buy the nft.
+
+##### Clock
+A debug endpoint. Call this in order to entire step the game forward. This force-steps inactive players one step forward. The game is round-based, meaning you can only roll the dice when everybody else has finished the previous round already.
+
+##### SetField(idx : nat, stock : nat, addr : address, price : tez, co2_multiplier : nat)
+An admin-endpoint for now. The admin can set a new token for a field.
+
+##### Payout
+An admin-endpoint. Sends balance from the contract to the admin.
+
+##### Refill
+A cosmetic public endpoint to send xtz balance to the contract.
+
+### Next steps for making the game a real product
 
     1. balance game parameters (timeout, bounty, amount of playing fields, nft prices etc)
-    2. per field 3 nfts with multiple editions ( research, proto etc)
+    2. per field 3 nfts with multiple editions ( research, prototype, startup etc)
     3. activity fields (go back to start without bounty etc), to avoid/reduce the possibility for people to play only to get tezos by making rounds
     4. market place to trade supported projects (secondary market)
-    5. how to refill the game? reset mode? 
-    6. people could be able to vote for which project include in the field
-    7. fix random number problem
-    8. frontend needs to be responsibe and dynamic
-    9. a round based mechanism, so all players are in sync, nobody can roll more than others
-    10. calculate saved co2 depending on how many nfts collected
-    11. create leaderboard of people who saved the most co2 by supporting projects
-    12. when you join the game it should cost a small fee
-    13. add a refill entrypoint to stock up on funds
-    14. send nft price to the contract instead of owner
-    15. branding & communication to talk about the project
-    16. how to add contract metadata to origination? (TZIP-16)
+    5. project submission mechanism. see below
+    6. fix random number problem
+    7. frontend needs to be responsibe and dynamic
+    8.  create leaderboard of people who saved the most co2 by supporting projects
+    9.  branding & communication to talk about the project
+    10. how to add contract metadata to origination? (TZIP-16)
 
 
-### notes
+#### Project submission mechanism
+Once all projects from a field are sold out, it's time to refill the game, so it can continue. There will be a separate mechanism for that, a submission contract.
 
-We are making use of OpenMinter to mint tokens. Also we are using the nftshop contract from the tacode tutorial.
+The submission contract will be a superset of a FA2 token minter. Any player can mint a token that includes basic data as name, description, 3d file (usdz), image and price in XTZ. This token will be minted and after an approval stage with a curator (dao, voting?) placed in a waiting queue. Once a playing field / a project has been supported by a player, it is sold out and will automatically be replaced by a new project from the waiting queue of new project.
+
+
+### Notes
+
+We are making use of OpenMinter to pre-mint tokens. In the future these will be minted by players of the game.
 
 For this we mint tokens, send them by hand to our contract. Before we do that, we need to mint all tokens and send them to the storage of out contract after we deployed it with the storage containing all our minted token addresses.
 Check [the storage file](./tripoly/main_storage.mligo)
-Once this is complete it's possible to interact with our contract via it's 'Support' entry point. This call needs to have the same amount associated than the price of the token.
+Once this is complete it's possible to interact with our contract via it's 'Support' entry point. This call needs to have the same amount associated than the price of the token. A playing field can be re-filled with a new token via the SetField endpoint.
 
 
 ### questions
@@ -61,46 +89,6 @@ Once this is complete it's possible to interact with our contract via it's 'Supp
     6. Can openMinter make it possible to wrap a file in a folder, so it can be downloaded easily with the existing file extension? Like https://infura-ipfs.io/ipfs/bafybeichybrqgboixxgcf4hgnxzmcgxsolwqhtwudyruze6crawka2sad4
 
 
-### main.mligo iteration log
-
-    first contract -> KT1ChmfSbutmeGLpGqX6J7X1vZpyuh943uuM
-    second contract, with dice -> KT1TDAToeMYtkv8bJ2jxGRBVZFZ1pTZcUMvX
-    third iteration, with name only, new position modulo -> KT1Ct1TJ6NPjPN1pfo428392rw9ScBQXXjKS
-    fourth iteration, simple saved co2 field -> KT18rNgBjupzv9YHw2nhu6PeuJrkNMzcATAL
-    5. iteration, conditional co2 saved -> KT1PjELyh37MW8p6ui6aQWQPmgFWRCuP3shd
-    6. iteration, no empty name allowed when using join endpoint -> KT1CoosHHw5zSDUueBSiiEM876bfq1hVagai
-    7. iteration, when over start, receive some tezzi -> KT1RgSCkbBuBvygQ5ne2fZKgshXJCLneMHjB
-    8. iteration, originated with some initial tez, can't send anything to the contract above :/ KT1NJLH1HkLPMogd2nG6amAxd193tfbo9YwU
-    9. iteration, checking for Tezos.balance before attempting -> KT1LyYzJ6hm9Piqh3QubV1RxYJxeCFHPG6Ax
-    10. iteration, adding fields map to storage -> KT1HGJraHkJTv3Q9azGRMBoQy5oidJVKg951
-    11. iteration, implements SetField admin endpoint -> KT1Q6HpqNdyNSfwkh4SaEyJNcZnK2ZrVhcsQ
-    12. adds barebones for 5min timeout for interaction. exposes dice call *dangerours* -> KT1Xk425atpHjnBin1fgjXvumWyLssSpg6p4
-    13. it seems it worked, make a real test edition: KT1UGSYe6TB5RkANKyHe7SJvsutPDwJVWbv6
-    14. dice should be 1 <= nr <= 6 -> KT1T4eNM8APgQnuiy8Z2kjeEFT9XJTiUebk2
-    15. changes field record, now using stock, token addr, tez price -> KT1Js7LVjGw8L6yLYGaB36fdZw2qnapA3Fm6
-    16. included the nft shop code as an endpoint: -> KT1QiT73UPVmoDGZX6Qxpkhrqmsn4UzwarPt. i sent the nft to this address. then i can buy it and it works :)))))
-    17. made a check, cant play when nfts not finished initializing. -> KT1H2P27NYGZPrLJfoR2tuxL3HdcXVgDdbWx
-    18. deployed the same contract with 18 test nfts as storage -> KT1FmuDmRD1to4GcVHSYAZgBEccCNNdjY7Gp. again, i've sent the nft of the collection KT1CE144SvpAv4iUQb8Zey4M3SKQQEV9DWMd to the contract and bought it via the support endpoint
-    19. final KT1JwJcQnzDLbpsLkQ1nyVJvM3Jru8cXJ8fh
-
-    20. add Refill endpoint (kinda cosmetic)
-    21. receive money from nft purchase into contract address
-    22. add supported fields list to player and co2 multiplier to field -> KT1K7yF9Vpst3gBydKf1YAuAWAE3V82Gje8G
-    23. calculating co2 multiplier -> KT1UDTABPDiXU6swCAc3We5DdkBv2hN2kxPX
-    24. adding debug flag and updating supported fields storage of player -> KT1KxSmjBQiuY6yLc5c1KaRgWMrsKZePbt5T
-
-    25. minted .usdz file, added to game
-    26. implemented a clock endpoint. Every player can call it, when a 24h timeout has happend, all inactive players are stepping forward. This is preparing the general round based playing. -> KT1UGfAS3fFJzJbNVC9t32mmK3k9mgFKCdeE
-    27. next iteration (with debug off), refactored the fa2 sender a little. kinda needing tests now -> KT1PFudVgJVPjwZWQ9TUYk23xFhppFZXCAYW
-    28. real round based playing, one round is 120s. debug on -> KT1KWP9JYFaTex983aXjigMA4AmC9Erurgs8
-    29. fix little operator bug -> KT1VzkKaXqVUa8MgeCNw3HeonRmQmzQkpUho
-    30. fix another operator bug in round playing mechanism -> KT1Hhxedz2DHSz24RLiXubLQv9u43uJbuNUy
-    31. fix bug that user would get auto-dice-roll bc it's timed out, but already stepped in this round -> KT1RNeMZvAf1ce6HpWw37GmLxCSZrUJL8QFM
-    32. FINALFINAL with final AR nfts -> KT1PZNb78PUiDRXmFGXPEyGaiocpk623CkEJ
-    33. meh, bug in payment transfer. finalfinalfinal -> KT1X87rN7Hu6ZY4uK8ayQ9LgBXezHtd7nkZG
-    34. some other small join bug -> KT19hqf8T654T3sFxRJpsULTtimqyGYK7Lhk
-
-
 ### integration tests?!
 
     ligo dry-run main.mligo main 'Join("Marcel")' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z'
@@ -110,3 +98,12 @@ Once this is complete it's possible to interact with our contract via it's 'Supp
     ligo dry-run main.mligo main 'Payout(10tz)' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z'
     ligo dry-run main.mligo main 'Refill()' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z' --amount=1
     ligo dry-run main.mligo main 'Clock()' "`cat main_storage.mligo`" --sender=tz1MEiHXRpHFmptzJyx4taqCmTHAYbcLpZUi --balance=10 --now='2021-01-01T10:10:10Z'
+
+
+### Team members
+
+    Marcel Schwittlick http://schwittlick.net/
+    Claude-Edwige Zengbé https://www.klodiezengbe.com/
+    Vinzenz Aubry https://vinzenzaubry.com/
+
+Berlin, 2021
