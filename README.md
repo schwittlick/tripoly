@@ -74,7 +74,7 @@ More development guidance in [DEVELOPMENT.md](DEVELOPMENT.md)
 ### Next Steps:
 
 #### Global improvement:
-- Make the entire board game in 3D. making it possible to play in AR/VR. 
+- Make the entire board game in 3D. making it possible to play in AR/VR. (see image blow) 
 - Submission mechanism: Make possible for people to submit project for the fields whose all possible NFT’s have been purchased, based on specific criterias (Curation, DAO, Multisign Wallet) 
 - Create the NTF for the 2 other levels of support (Prototype, Start-up). Having multiple editions of each NTF in each field. 
 - Add activity fields (go back to start without bounty etc., to avoid/reduce the possibility for people to play only to get tezos by making rounds)
@@ -82,6 +82,10 @@ More development guidance in [DEVELOPMENT.md](DEVELOPMENT.md)
 - Do we want a leaderboard of players who saved the most CO2 by supporting the projects?
 - Challenge the CO2 balance Certificate
 - Build a community around the game
+
+This is a sketch of the Tripoly playing board in Augmented Reality:
+![AR playing board](./images/next_steps_ar_board.jpg "AR playing board")
+
 
 #### Technical improvement:
 - Make an additional contract allowing users to mint NFT as a submission. 
