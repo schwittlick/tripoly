@@ -64,7 +64,7 @@ Our source code of the contract is [main.mligo](tripoly/main.mligo)
 
 The frontend is running here: https://tripoly.vinzenzaubry.com/
 
-The frontend code is in the submodule called [webapp](webapp)
+The frontend code is in the submodule "webapp": https://github.com/vin-ni/tripoly-frontend
 
 A list of all projects that are featured within Tripoly are listed here https://docs.google.com/spreadsheets/d/14lT92V5NXHRhLmGlB0faUw2Ako9qKdmIUlRZWAojz_0/edit?usp=sharing
 
