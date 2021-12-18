@@ -94,6 +94,7 @@ This is a sketch of the Tripoly playing board in Augmented Reality:
 - Fix random number generator problem (How to generate a random number within the contract?) 
 - How to add contract metadata to origination? (TZIP-16)
 - Write unit tests for the contracts?
+- Refactor contract code for improved maintainability
 
 #### Project submission mechanism
 Once all projects from a field are sold out, it's time to refill the game, so it can continue. There will be a separate mechanism for that, a submission contract.
