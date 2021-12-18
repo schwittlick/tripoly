@@ -1,10 +1,10 @@
 ## TRIPOLY
 
-Tripoly is a round based, decentralized and multiplayer board-game on the Tezos Blockchain.The aim of this game is to educate about renewable and sustainable projects in a simple, playful and interactive way. 
+Tripoly is a round based, decentralised and multiplayer board-game on the Tezos Blockchain.The aim of this game is to educate about renewable and sustainable projects in a simple, playful and interactive way. 
 
 Some of you may know the Anti-Monopoly games. We love the idea of being Tripoly is another disruptive form of Anti-monopoly. We turn the values game of Monopoly around and re-shape it for the future of web3 : from a capitalistic dynamic to an open source knowledge game using the conventions and the features of the metaverse. 
 
-Are you ready? 
+Are you ready? 🎲
 
 ![alt text](./images/screenshot.png "Screenshot of the game board of Tripoly")
 
@@ -20,7 +20,7 @@ Each project has 3 levels of support : Research, Prototype, Start-up
 You can support the project by buying the NFT related to and also receive a CO2 balance certificate.
 
 Keep playing and going over the start, players are rewarded by two bounties : 
-- Tezos (1 tz) 
+- Tezos (1ꜩ) 
 - CO2 saved balance
 
 NFTs : 
@@ -56,19 +56,22 @@ The CO2 balance is calculated at each round based on how many projects you suppo
 Because Tripoly is a round based game and to allow everyone to play fair, players can roll the dice once per 24h. The game is not about making the round as fast as possible but to discover, understand the projects, and have time to explore the AR world. For development purposes, we have a "Clock" endpoint. This will advance all players who have no rolled the dice in the current round. After "Clock" a new round starts and everybody can roll the dice again. 
 
 
-### Deployment
+### Links
+
+The frontend is running here: https://tripoly.vinzenzaubry.com/
+
+Video of the gameplay demo https://www.youtube.com/watch?v=iNEPBtHtyR0
+
 
 The most recent contract is deployed here: https://better-call.dev/hangzhou2net/KT19hqf8T654T3sFxRJpsULTtimqyGYK7Lhk
 
 Our source code of the contract is [main.mligo](tripoly/main.mligo)
 
-The frontend is running here: https://tripoly.vinzenzaubry.com/
+The frontend source code is in the submodule "webapp": https://github.com/vin-ni/tripoly-frontend
 
-The frontend code is in the submodule "webapp": https://github.com/vin-ni/tripoly-frontend
+More development information in [DEVELOPMENT.md](DEVELOPMENT.md)
 
 A list of all projects that are featured within Tripoly are listed here https://docs.google.com/spreadsheets/d/14lT92V5NXHRhLmGlB0faUw2Ako9qKdmIUlRZWAojz_0/edit?usp=sharing
-
-More development guidance in [DEVELOPMENT.md](DEVELOPMENT.md)
 
 
 ### Next Steps:
